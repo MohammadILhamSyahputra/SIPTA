@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Barang;
 use App\Models\Transaksi;
 
 class DetailTransaksi extends Model
 {
+    use HasFactory;
     protected $table = 'detail_transaksi';
+    protected $primaryKey = 'id';
     protected $fillable = ['id_transaksi','id_barang','qty','harga_satuan','subtotal'];
 
     public function barang()

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DetailTransaksi;
 
 class Transaksi extends Model
 {
+    use HasFactory;
     protected $table = 'transaksi';
+    protected $primaryKey = 'id';
     protected $fillable = ['total_harga','total_bayar','kembalian','tanggal'];
 
     public function detail()

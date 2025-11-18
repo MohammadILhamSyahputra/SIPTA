@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Kategori;
 use App\Models\Sales;
@@ -10,7 +11,9 @@ use App\Models\DetailRiwayatSales;
 
 class Barang extends Model
 {
+    use HasFactory;
     protected $table = 'barang';
+    protected $primaryKey = 'id';
     protected $fillable = ['kode_barang','nama','stok','harga_beli','harga_jual','id_kategori','id_sales'];
 
     public function kategori()
