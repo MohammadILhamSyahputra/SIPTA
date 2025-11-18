@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Kategori;
+use App\Models\Sales;
+use App\Models\DetailTransaksi;
+use App\Models\DetailRiwayatSales;
+
+class Barang extends Model
+{
+    protected $table = 'barang';
+    protected $fillable = ['kode_barang','nama','stok','harga_beli','harga_jual','id_kategori','id_sales'];
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'id_kategori');
+    }
+
+    public function sales()
+    {
+        return $this->belongsTo(Sales::class, 'id_sales');
+    }
+
+    public function detailTransaksi()
+    {
+        return $this->hasMany(DetailTransaksi::class, 'id_barang');
+    }
+
+    public function detailRiwayatSales()
+    {
+        return $this->hasMany(DetailRiwayatSales::class, 'barang_id');
+    }
+}
