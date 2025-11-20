@@ -25,12 +25,13 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required',
-            'id_kategori' => 'required|exists:kategori,id',
-            'id_sales' => 'required|exists:sales,id',
+            'kode_barang' => 'nullable|string|max:50',
+            'nama' => 'required|string|max:255', 
             'stok' => 'required|integer',
             'harga_beli' => 'required|integer',
             'harga_jual' => 'required|integer',
+            'id_kategori' => 'required|exists:kategori,id',
+            'id_sales' => 'required|exists:sales,id',
         ]);
 
         Barang::create($request->all());

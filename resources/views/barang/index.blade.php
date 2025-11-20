@@ -32,14 +32,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- @if (isset($barang) && $barang->count() > 0) --}}
                             @foreach ($barang as $barang)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>**{{ $barang->kode_barang }}**</td>
-                                    <td>{{ $barang->nama_barang }}</td>
+                                    <td>{{ $barang->kode_barang }}</td>
+                                    <td>{{ $barang->nama}}</td>
                                     <td>
-                                        <span class="badge {{ $barang->stok > 20 ? 'text-bg-success' : 'text-bg-warning' }}">
+                                        <span class="badge 
+                                            {{ $barang->stok < 10 ? 'text-bg-danger' 
+                                                : ($barang->stok <= 20 ? 'text-bg-warning' 
+                                                : 'text-bg-success') 
+                                            }}">
                                             {{ $barang->stok }}
                                         </span>
                                     </td>
@@ -62,11 +65,6 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        {{-- @else
-                            <tr>
-                                <td colspan="9" class="text-center">Tidak ada data barang yang tersedia.</td>
-                            </tr>
-                        @endif --}}
                     </tbody>
                 </table>
             </div>
