@@ -23,7 +23,7 @@
                             <div class="col-md-6">
 
                                 <div class="mb-3">
-                                    <label for="kode_barang" class="form-label">Kode Barang (Opsional)</label>
+                                    <label for="kode_barang" class="form-label">Kode Barang</label>
                                     <input 
                                         type="text" 
                                         class="form-control @error('kode_barang') is-invalid @enderror" 
@@ -118,7 +118,7 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="id_sales" class="form-label">Sales / Pencatat</label>
+                                    <label for="id_sales" class="form-label">Sales</label>
                                     <select class="form-select @error('id_sales') is-invalid @enderror" id="id_sales" name="id_sales" required>
                                         <option value="">Pilih Sales</option>
                                         @foreach ($sales as $s)

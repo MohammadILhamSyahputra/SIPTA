@@ -119,7 +119,7 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="id_sales" class="form-label">Sales / Pencatat</label>
+                                    <label for="id_sales" class="form-label">Sales</label>
                                     <select class="form-select @error('id_sales') is-invalid @enderror" id="id_sales" name="id_sales" required>
                                         <option value="">Pilih Sales</option>
                                         @foreach ($sales as $s)
