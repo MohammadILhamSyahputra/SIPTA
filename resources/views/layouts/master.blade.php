@@ -43,17 +43,11 @@
 <body>
 
     <div class="d-flex" id="wrapper">
-        
-        <!-- Sidebar -->
         <div class="border-end border-secondary" id="sidebar-wrapper">
             <div class="sidebar-heading border-bottom p-3 text-white bg-dark">
                 <img src="{{ asset('template/img/logoSipta.jpg') }}" alt="Logo SIPTA" class="me-2" style="height: 30px; width: auto;"><b>SIPTA</b>
             </div>
-            
-            <!-- Menu Sidebar (Menggunakan Route Anda) -->
             <div class="list-group list-group-flush sidebar-menu">
-                
-                {{-- Ganti '/' dengan route dashboard Anda jika ada route khusus --}}
                 <a href="{{ url('/') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
@@ -66,69 +60,46 @@
                     <i class="fas fa-tags me-2"></i> Kategori
                 </a>
                 <a href="{{ route('sales.index') }}" class="list-group-item list-group-item-action">
-                    <i class="fas fa-users me-2"></i> Sales / User
+                    <i class="fas fa-users me-2"></i> Sales
                 </a>
                 
-                <div class="text-secondary small mt-3 px-3">TRANSAKSI & RIWAYAT</div>
-                {{-- Transaksi.create digunakan untuk halaman POS (input transaksi baru) --}}
+                {{-- <div class="text-secondary small mt-3 px-3">TRANSAKSI & RIWAYAT</div>
                 <a href="{{ route('transaksi.create') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-cash-register me-2"></i> Point of Sale (POS)
                 </a>
-                {{-- Transaksi.index digunakan untuk riwayat/daftar transaksi --}}
                 <a href="{{ route('transaksi.index') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-receipt me-2"></i> Riwayat Transaksi
                 </a>
                 <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-chart-line me-2"></i> Riwayat Sales
-                </a>
+                </a> --}}
                 
             </div>
         </div>
-        <!-- /#sidebar-wrapper -->
-
-        <!-- Page Content Wrapper -->
         <div id="page-content-wrapper">
-
-            <!-- Navbar (Top Header) - Dipanggil dari file terpisah -->
             @include('layouts.navbar')
-
-            <!-- Main Content Area -->
             <div class="container-fluid p-4">
-                {{-- Flash Message dipanggil di sini --}}
                 @include('layouts.flash-message') 
-                
-                {{-- KONTEN UTAMA HALAMAN --}}
                 @yield('content')
             </div>
-            <!-- /Main Content -->
-
         </div>
-        <!-- /#page-content-wrapper -->
 
     </div>
-    <!-- /#wrapper -->
-
-    <!-- JAVASCRIPT -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     
     <script>
         $(document).ready(function () {
-            // Inisiasi DataTables default untuk tabel dengan ID 'tabel-produk'
             if ($.fn.DataTable) {
                  $('#tabel-produk').DataTable();
             }
-           
-            // Script untuk toggle sidebar (opsional)
             $('#menu-toggle').click(function(e) {
                 e.preventDefault();
                 $('#wrapper').toggleClass('toggled');
             });
         });
     </script>
-    
     @yield('scripts')
-
 </body>
 </html>
