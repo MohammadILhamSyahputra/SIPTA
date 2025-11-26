@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top">
     <div class="container-fluid">
         
         <a class="nav-link text-dark me-3" href="#" id="menu-toggle" title="Klik untuk menyembunyikan/menampilkan Sidebar">

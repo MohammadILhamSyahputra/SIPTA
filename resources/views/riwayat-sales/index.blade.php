@@ -31,7 +31,7 @@
                             @foreach ($riwayat as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>**{{ $item->sales->nama_sales ?? 'Sales Dihapus' }}**</td>
+                                    <td>{{ $item->sales->nama_sales ?? 'Sales Dihapus' }}</td>
 
                                     <td>
                                         @php

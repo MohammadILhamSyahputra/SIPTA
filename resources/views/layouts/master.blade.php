@@ -17,16 +17,25 @@
             width: 250px;
             background-color: #343a40;
             transition: margin .25s ease-out;
+
+            position: fixed; 
+            top: 0;
+            left: 0;
+            min-height: 100vh;
+            width: 250px;
+            /* z-index: 1030; */
         }
         #page-content-wrapper {
             width: 100%;
+            margin-left: 250px;
+            /* padding-top: 56px; */
         }
         .sidebar-menu .list-group-item {
             color: #adb5bd; 
             background-color: #343a40;
             border: none;
             border-radius: 0;
-            padding-top: 1rem;     /* Padding atas */
+            padding-top: 1rem; 
             padding-bottom: 1rem;
             padding-left: 1.5rem;
         }
@@ -38,6 +47,17 @@
             color: #6c757d; 
             font-weight: bold;
             padding-left: 1.5rem;
+        }
+        .sidebar-menu .list-group-item.active {
+            background-color: #64717d;
+            color: #fff;
+        }
+        body {
+            overflow-x: hidden; 
+        }
+        .navbar.fixed-top {
+            left: 250px; 
+            width: calc(100% - 250px); 
         }
     </style>
     @yield('styles')
@@ -55,17 +75,17 @@
                 </a>
                 
                 {{-- <div class="text-secondary small mt-3 px-3">MASTER DATA</div> --}}
-                <a href="{{ route('barang.index') }}" class="list-group-item list-group-item-action">
+                <a href="{{ route('barang.index') }}" class="list-group-item list-group-item-action {{ Request::is('barang*') ? 'active' : '' }}">
                     <i class="fas fa-boxes me-2"></i> Pengelolaan Barang
                 </a>
-                <a href="{{ route('kategori.index') }}" class="list-group-item list-group-item-action">
+                <a href="{{ route('kategori.index') }}" class="list-group-item list-group-item-action {{ Request::is('kategori*') ? 'active' : '' }}">
                     <i class="fas fa-tags me-2"></i> Kategori
                 </a>
-                <a href="{{ route('sales.index') }}" class="list-group-item list-group-item-action">
+                <a href="{{ route('sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('sales*') ? 'active' : '' }}">
                     <i class="fas fa-users me-2"></i> Sales
                 </a>
 
-                <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action">
+                <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('riwayat-sales*') || Request::is('detail-riwayat-sales*') ? 'active' : '' }}">
                     <i class="fas fa-users me-2"></i> Riwayat Sales
                 </a>
                 
@@ -82,7 +102,7 @@
                 
             </div>
         </div>
-        <div id="page-content-wrapper">
+        <div id="page-content-wrapper" class="pt-5"> 
             @include('layouts.navbar')
             <div class="container-fluid p-4">
                 @include('layouts.flash-message') 

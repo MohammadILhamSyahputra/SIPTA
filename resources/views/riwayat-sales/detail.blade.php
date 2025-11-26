@@ -24,7 +24,7 @@
                 </div>
                 <div class="col-md-6">
                     <p><strong>Tanggal Kunjungan:</strong> 
-                        {{ \Carbon\Carbon::parse($riwayat->tanggal_kunjungan)->translatedFormat('l, d F Y H:i') }}
+                        {{ \Carbon\Carbon::parse($riwayat->tanggal_kunjungan)->locale('id')->translatedFormat('l, d F Y H:i') }}
                     </p>
                     <p><strong>Dibuat Pada:</strong> 
                         {{ \Carbon\Carbon::parse($riwayat->created_at)->translatedFormat('d M Y') }}
@@ -33,12 +33,13 @@
             </div>
         </div>
     </div>
-    <button type="button" class="btn btn-sm btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#tambahDetailModal">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Data Barang
-            </button>
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">Daftar Barang Transaksi</h6>
+            <a href="{{ route('detail-riwayat-sales.create', ['riwayat_sales_id' => $riwayat->id]) }}" 
+            class="btn btn-success shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Barang Baru
+            </a>
         </div>
         <div class="card-body">
             @if ($riwayat->detail->isEmpty())
@@ -52,17 +53,23 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama Barang</th>
-                                <th>QTY Masuk (Terjual/Stok Keluar)</th>
-                                <th>QTY Retur (Dikembalikan)</th>
+                                <th>QTY Masuk </th>
+                                <th>QTY Retur </th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($riwayat->detail as $detail)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $detail->barang->nama_barang ?? 'Barang Dihapus' }}</td>
+                                    <td>{{ $detail->barang->nama ?? 'Barang Dihapus' }}</td>
                                     <td>{{ number_format($detail->qty_masuk) }}</td>
                                     <td>{{ number_format($detail->qty_retur) }}</td>
+                                    <td>
+                                        <a href="{{ route('detail-riwayat-sales.edit', $detail->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
