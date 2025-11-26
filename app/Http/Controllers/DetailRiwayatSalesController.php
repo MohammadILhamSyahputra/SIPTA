@@ -19,7 +19,7 @@ class DetailRiwayatSalesController extends Controller
     {
         $riwayat = RiwayatSales::all();
         $barang = Barang::all();
-        return view('detail_riwayat.create', compact('riwayat','barang'));
+        return view('detail_riwayat_sales.create-detail', compact('riwayat','barang'));
     }
 
     public function store(Request $request)
@@ -97,22 +97,5 @@ class DetailRiwayatSalesController extends Controller
         return redirect()
             ->route('detail-riwayat.index')
             ->with('success', 'Data detail berhasil diperbarui & stok disesuaikan!');
-    }
-
-    public function destroy($id)
-    {
-        $detail = DetailRiwayatSales::findOrFail($id);
-        $barang = Barang::findOrFail($detail->barang_id);
-
-        // Kembalikan stok ke kondisi sebelum input
-        $barang->stok -= $detail->qty_masuk;  // qty masuk mengurangi stok yang pernah ditambah
-        $barang->stok += $detail->qty_retur;  // qty retur mengembalikan stok yang pernah dikurangi
-
-        $barang->save();
-        $detail->delete();
-
-        return redirect()
-            ->route('detail-riwayat.index')
-            ->with('success', 'Detail riwayat dihapus dan stok dikembalikan!');
     }
 }

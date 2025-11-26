@@ -26,6 +26,8 @@
             background-color: #343a40;
             border: none;
             border-radius: 0;
+            padding-top: 1rem;     /* Padding atas */
+            padding-bottom: 1rem;
             padding-left: 1.5rem;
         }
         .sidebar-menu .list-group-item:hover, .sidebar-menu .list-group-item.active {
@@ -52,7 +54,7 @@
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
                 
-                <div class="text-secondary small mt-3 px-3">MASTER DATA</div>
+                {{-- <div class="text-secondary small mt-3 px-3">MASTER DATA</div> --}}
                 <a href="{{ route('barang.index') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-boxes me-2"></i> Pengelolaan Barang
                 </a>
@@ -61,6 +63,10 @@
                 </a>
                 <a href="{{ route('sales.index') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-users me-2"></i> Sales
+                </a>
+
+                <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-users me-2"></i> Riwayat Sales
                 </a>
                 
                 {{-- <div class="text-secondary small mt-3 px-3">TRANSAKSI & RIWAYAT</div>

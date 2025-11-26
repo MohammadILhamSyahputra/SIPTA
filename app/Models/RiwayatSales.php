@@ -21,6 +21,6 @@ class RiwayatSales extends Model
 
     public function detail()
     {
-        return $this->hasMany(DetailRiwayatSales::class, 'riwayat_id');
+        return $this->hasMany(DetailRiwayatSales::class, 'riwayat_sales_id');
     }
 }
