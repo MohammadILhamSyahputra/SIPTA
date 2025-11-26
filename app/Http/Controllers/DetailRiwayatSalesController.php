@@ -53,9 +53,7 @@ class DetailRiwayatSalesController extends Controller
     public function edit($id)
     {
         $detail = DetailRiwayatSales::with('barang', 'riwayat.sales')->findOrFail($id);
-        $barang = Barang::all(); // Tetap kirim semua barang untuk dropdown
-
-        // Nama view akan menjadi 'detail-riwayat-sales.edit-detail'
+        $barang = Barang::all();
         return view('detail-riwayat-sales.edit-detail', compact('detail', 'barang'));
     }
 
@@ -69,35 +67,25 @@ class DetailRiwayatSalesController extends Controller
         ]);
 
         $detail = DetailRiwayatSales::findOrFail($id);
-        $barang = Barang::findOrFail($detail->barang_id); // Gunakan barang lama
+        $barang = Barang::findOrFail($detail->barang_id);
 
-        // --- LOGIKA PENYESUAIAN STOK ---
-        
-        // 1. Hitung Selisih QTY Masuk
         $selisihMasuk = $request->qty_masuk - $detail->qty_masuk;
-        $barang->stok += $selisihMasuk; // Jika selisih positif (tambah), jika negatif (kurang)
+        $barang->stok += $selisihMasuk;
 
-        // 2. Hitung Selisih QTY Retur (Pengurangan Stok Gudang)
         $selisihRetur = $request->qty_retur - $detail->qty_retur;
         
-        // Cek apakah ada penambahan retur yang melebihi stok yang tersisa
         if ($selisihRetur > 0) {
-            // Jika retur baru lebih besar dari retur lama (berarti stok gudang berkurang)
             if ($barang->stok < $selisihRetur) {
                 return back()->with('error', 'Stok tidak cukup untuk update retur!');
             }
             $barang->stok -= $selisihRetur;
         } else {
-            // Jika retur baru lebih kecil dari retur lama (berarti stok gudang bertambah)
-            $barang->stok -= $selisihRetur; // selisihRetur negatif, sehingga stok bertambah
+            $barang->stok -= $selisihRetur;
         }
-
-        // --- AKHIR LOGIKA PENYESUAIAN STOK ---
         
         $barang->save();
         $detail->update($request->all());
 
-        // Redirect kembali ke halaman detail riwayat utama
         return redirect()
             ->route('riwayat-sales.show', $detail->riwayat_sales_id)
             ->with('success', 'Detail transaksi berhasil diperbarui dan stok disesuaikan!');
