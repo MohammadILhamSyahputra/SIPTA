@@ -70,7 +70,7 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($penjualanDetails as $index => $detail)
+            @forelse ($tableData as $index => $detail)
             <tr>
                 <td class="text-center">{{ $index + 1 }}</td>
                 <td>{{ $detail->barang->kode_barang }}</td>

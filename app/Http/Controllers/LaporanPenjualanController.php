@@ -19,7 +19,8 @@ class LaporanPenjualanController extends Controller
         $startDate = Carbon::now()->startOfMonth()->format('Y-m-d');
         $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
 
-        return $this->getLaporanData($startDate, $endDate);
+        $data = $this->getLaporanData($startDate, $endDate);
+        return view('laporan_penjualan', $data);
     }
 
     /**
@@ -38,7 +39,8 @@ class LaporanPenjualanController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        return $this->getLaporanData($startDate, $endDate);
+        $data = $this->getLaporanData($startDate, $endDate);
+        return view('laporan_penjualan', $data);
     }
 
     public function exportPdf(Request $request)
@@ -93,14 +95,14 @@ class LaporanPenjualanController extends Controller
         $startDateFormatted = Carbon::parse($startDate)->locale('id')->translatedFormat('d F Y');
         $endDateFormatted = Carbon::parse($endDate)->locale('id')->translatedFormat('d F Y');
 
-        return view('laporan_penjualan', compact(
-            'tableData',
-            'totalOmset',
-            'totalUntung',
-            'startDate',
-            'endDate',
-            'startDateFormatted',
-            'endDateFormatted'
-        ));
+        return [
+            'tableData' => $tableData,
+            'totalOmset' => $totalOmset,
+            'totalUntung' => $totalUntung,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'startDateFormatted' => $startDateFormatted,
+            'endDateFormatted' => $endDateFormatted,
+        ];
     }
 }
