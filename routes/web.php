@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\DetailTransaksiController;
 use App\Http\Controllers\DetailRiwayatSalesController;
@@ -9,11 +10,13 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\RiwayatSalesController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanPenjualanController;
+use App\Http\Controllers\LaporanSalesController;
 
 Route::get('/', function () {
     return view('welcome');
 });
-
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::resource('laporan-sales', SalesController::class);
 // ======================================
 // BARANG & LAPORAN STOK
 // ======================================
@@ -45,13 +48,13 @@ Route::resource('riwayat-sales', RiwayatSalesController::class);
 // ======================================
 // DETAIL RIWAYAT SALES (Custom Routes)
 // ======================================
-Route::get('riwayat-sales/{riwayat_sales_id}/detail/create', 
+Route::get('riwayat-sales/{riwayat_sales_id}/detail/create',
     [DetailRiwayatSalesController::class, 'create'])->name('detail-riwayat-sales.create');
-Route::post('riwayat-sales/detail/store', 
+Route::post('riwayat-sales/detail/store',
     [App\Http\Controllers\DetailRiwayatSalesController::class, 'store'])->name('detail-riwayat-sales.store');
-Route::get('detail-riwayat-sales/{id}/edit', 
-    [\App\Http\Controllers\DetailRiwayatSalesController::class, 'edit'])->name('detail-riwayat-sales.edit'); 
-Route::put('detail-riwayat-sales/{id}', 
+Route::get('detail-riwayat-sales/{id}/edit',
+    [\App\Http\Controllers\DetailRiwayatSalesController::class, 'edit'])->name('detail-riwayat-sales.edit');
+Route::put('detail-riwayat-sales/{id}',
     [\App\Http\Controllers\DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
 
 

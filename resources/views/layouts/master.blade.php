@@ -18,7 +18,7 @@
             background-color: #343a40;
             transition: margin .25s ease-out;
 
-            position: fixed; 
+            position: fixed;
             top: 0;
             left: 0;
             min-height: 100vh;
@@ -31,20 +31,20 @@
             /* padding-top: 56px; */
         }
         .sidebar-menu .list-group-item {
-            color: #adb5bd; 
+            color: #adb5bd;
             background-color: #343a40;
             border: none;
             border-radius: 0;
-            padding-top: 1rem; 
+            padding-top: 1rem;
             padding-bottom: 1rem;
             padding-left: 1.5rem;
         }
         .sidebar-menu .list-group-item:hover, .sidebar-menu .list-group-item.active {
-            background-color: #495057; 
+            background-color: #495057;
             color: #fff;
         }
         .sidebar-menu .small {
-            color: #6c757d; 
+            color: #6c757d;
             font-weight: bold;
             padding-left: 1.5rem;
         }
@@ -53,11 +53,11 @@
             color: #fff;
         }
         body {
-            overflow-x: hidden; 
+            overflow-x: hidden;
         }
         .navbar.fixed-top {
-            left: 250px; 
-            width: calc(100% - 250px); 
+            left: 250px;
+            width: calc(100% - 250px);
         }
     </style>
     @yield('styles')
@@ -67,13 +67,13 @@
     <div class="d-flex" id="wrapper">
         <div class="border-end border-secondary" id="sidebar-wrapper">
             <div class="sidebar-heading border-bottom p-3 text-white bg-dark">
-                <img src="{{ asset('template/img/logoSipta.jpg') }}" alt="Logo SIPTA" class="me-2" style="height: 30px; width: auto;"><b>SIPTA</b>
+                <img src="{{ asset('template/img/logosipta.png') }}" alt="Logo SIPTA" class="me-2" style="height: 30px; width: auto;"><b>SIPTA</b>
             </div>
             <div class="list-group list-group-flush sidebar-menu">
-                <a href="{{ url('/') }}" class="list-group-item list-group-item-action">
+                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
-                
+
                 {{-- <div class="text-secondary small mt-3 px-3">MASTER DATA</div> --}}
                 <a href="{{ route('barang.index') }}" class="list-group-item list-group-item-action {{ Request::is('barang*') ? 'active' : '' }}">
                     <i class="fas fa-boxes me-2"></i> Pengelolaan Barang
@@ -88,7 +88,7 @@
                 <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('riwayat-sales*') || Request::is('detail-riwayat-sales*') ? 'active' : '' }}">
                     <i class="fas fa-users me-2"></i> Riwayat Sales
                 </a>
-                
+
                 {{-- <div class="text-secondary small mt-3 px-3">TRANSAKSI & RIWAYAT</div>
                 <a href="{{ route('transaksi.create') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-cash-register me-2"></i> Point of Sale (POS)
@@ -99,13 +99,13 @@
                 <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-chart-line me-2"></i> Riwayat Sales
                 </a> --}}
-                
+
             </div>
         </div>
-        <div id="page-content-wrapper" class="pt-5"> 
+        <div id="page-content-wrapper" class="pt-5">
             @include('layouts.navbar')
             <div class="container-fluid p-4">
-                @include('layouts.flash-message') 
+                @include('layouts.flash-message')
                 @yield('content')
             </div>
         </div>
@@ -114,7 +114,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    
+
     <script>
         $(document).ready(function () {
             if ($.fn.DataTable) {
