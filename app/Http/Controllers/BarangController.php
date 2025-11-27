@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\Kategori;
 use App\Models\Sales;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class BarangController extends Controller
@@ -121,17 +122,20 @@ class BarangController extends Controller
         foreach ($barangs as $barang) {
             
             // --- PERHITUNGAN STOK MASUK (DETAIL RIWAYAT SALES) ---
+            // Menggunakan kolom 'qty_masuk' dan 'barang_id' sesuai definisi migration Anda
             $totalMasuk = DB::table('detail_riwayat_sales')
-                ->where('id_barang', $barang->id)
+                ->where('barang_id', $barang->id) 
                 ->whereBetween(DB::raw('DATE(created_at)'), [$tglMulai, $tglAkhir])
-                ->sum('jumlah');
+                ->sum('qty_masuk');
 
             // --- PERHITUNGAN STOK KELUAR (DETAIL TRANSAKSI / TERJUAL) ---
+            // PERHATIAN: Asumsi kolom relasi ke barang adalah 'barang_id' dan kuantitas adalah 'qty_keluar'.
+            // Anda HARUS cek migration 'detail_transaksi' dan sesuaikan 'qty_keluar' jika salah.
             $totalTerjual = DB::table('detail_transaksi as dt')
                 ->join('transaksi as t', 'dt.id_transaksi', '=', 't.id')
-                ->where('dt.id_barang', $barang->id)
+                ->where('dt.id_barang', $barang->id) // <-- PERBAIKAN: Menggunakan barang_id
                 ->whereBetween(DB::raw('DATE(t.created_at)'), [$tglMulai, $tglAkhir]) // Filter berdasarkan tanggal transaksi
-                ->sum('dt.jumlah');
+                ->sum('dt.qty'); // <-- PERBAIKAN: Menggunakan qty_keluar (ASUMSI)
 
             // --- PERHITUNGAN STOK AWAL PERIODE ---
             // Stok Akhir adalah stok saat ini (stok global di tabel barang)
