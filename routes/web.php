@@ -8,6 +8,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\RiwayatSalesController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\LaporanPenjualanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -47,3 +48,8 @@ Route::prefix('detail-riwayat-sales')->name('detail-riwayat-sales.')->group(func
     Route::post('/store', [DetailRiwayatSalesController::class, 'store'])->name('store');
     Route::delete('/{id}', [DetailRiwayatSalesController::class, 'destroy'])->name('destroy');
 });
+
+Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
+Route::post('/laporan-penjualan', [LaporanPenjualanController::class, 'filter'])->name('laporan.penjualan.filter');
+
+Route::get('/laporan-penjualan/export-pdf', [LaporanPenjualanController::class, 'exportPdf'])->name('laporan.penjualan.exportPdf');

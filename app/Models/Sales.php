@@ -23,4 +23,9 @@ class Sales extends Model
     {
         return $this->hasMany(RiwayatSales::class, 'sales_id');
     }
+
+     public function detailPenjualan()
+    {
+        return $this->hasMany(DetailPenjualan::class, 'transaksi_id');
+    }
 }
