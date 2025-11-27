@@ -13,19 +13,37 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// ======================================
+// BARANG & LAPORAN STOK
+// ======================================
 Route::resource('barang', BarangController::class);
 
-// Sales
+// Route KHUSUS untuk Laporan Stok (tanpa prefix 'owner')
+Route::get('laporan-stok-barang', [BarangController::class, 'laporanStok'])
+    ->name('laporan barang.laporan_stok');
+
+
+// ======================================
+// SALES
+// ======================================
 Route::resource('sales', SalesController::class);
 
-// Kategori
+
+// ======================================
+// KATEGORI
+// ======================================
 Route::resource('kategori', KategoriController::class);
 
-// Riwayat Sales
+
+// ======================================
+// RIWAYAT SALES
+// ======================================
 Route::resource('riwayat-sales', RiwayatSalesController::class);
 
-// Route::resource('detail-riwayat-sales', DetailRiwayatSalesController::class);
 
+// ======================================
+// DETAIL RIWAYAT SALES (Custom Routes)
+// ======================================
 Route::get('riwayat-sales/{riwayat_sales_id}/detail/create', 
     [DetailRiwayatSalesController::class, 'create'])->name('detail-riwayat-sales.create');
 Route::post('riwayat-sales/detail/store', 
@@ -35,7 +53,10 @@ Route::get('detail-riwayat-sales/{id}/edit',
 Route::put('detail-riwayat-sales/{id}', 
     [\App\Http\Controllers\DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
 
-// Transaksi
+
+// ======================================
+// TRANSAKSI
+// ======================================
 Route::prefix('transaksi')->name('transaksi.')->group(function () {
     Route::get('/', [TransaksiController::class, 'index'])->name('index');
     Route::get('/create', [TransaksiController::class, 'create'])->name('create');
@@ -43,18 +64,13 @@ Route::prefix('transaksi')->name('transaksi.')->group(function () {
     Route::delete('/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
 });
 
-// Detail Transaksi
+
+// ======================================
+// DETAIL TRANSAKSI
+// ======================================
 Route::prefix('detail-transaksi')->name('detail-transaksi.')->group(function () {
     Route::get('/', [DetailTransaksiController::class, 'index'])->name('index');
     Route::get('/create', [DetailTransaksiController::class, 'create'])->name('create');
     Route::post('/store', [DetailTransaksiController::class, 'store'])->name('store');
     Route::delete('/{id}', [DetailTransaksiController::class, 'destroy'])->name('destroy');
 });
-
-// Detail Riwayat Sales
-// Route::prefix('detail-riwayat-sales')->name('detail-riwayat-sales.')->group(function () {
-//     Route::get('/', [DetailRiwayatSalesController::class, 'index'])->name('index');
-//     Route::get('/create', [DetailRiwayatSalesController::class, 'create'])->name('create');
-//     Route::post('/store', [DetailRiwayatSalesController::class, 'store'])->name('store');
-//     Route::delete('/{id}', [DetailRiwayatSalesController::class, 'destroy'])->name('destroy');
-// });
