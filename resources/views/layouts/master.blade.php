@@ -101,7 +101,7 @@
                 </a> --}}
 
                 <a href="{{ route('laporan_barang.laporan_stok') }}" class="list-group-item list-group-item-action {{ Request::is('laporan-stok-barang*') ? 'active' : '' }}">
-                    <i class="fas fa-boxes me-2"></i> Laporan Stok barang
+                    <i class="fas fa-boxes me-2"></i> Laporan Barang Terlaris
                 </a>
                 <a href="/laporan-penjualan" class="list-group-item list-group-item-action {{ Request::is('laporan-penjualan*') ? 'active' : '' }}">
                     <i class="fas fa-boxes me-2"></i> Laporan Penjualan

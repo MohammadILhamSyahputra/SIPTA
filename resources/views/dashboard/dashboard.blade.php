@@ -1,12 +1,12 @@
-@extends('layouts.master') {{-- Pastikan nama layout file-nya benar --}}
+@extends('layouts.master')
 
 @section('title', 'Dashboard Toko Ardiyana')
 
 @section('content')
 <div class="row">
 
-    {{-- 1. Kotak Jumlah Barang --}}
-    <div class="col-xl-3 col-md-6 mb-4">
+    {{-- 1. Kotak Jumlah Barang (Biru) --}}
+    <div class="col-xl-4 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2" style="background-color: #3b82f6; color: white;">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -14,20 +14,19 @@
                         <div class="text-xs font-weight-bold text-uppercase mb-1">
                             Jumlah Barang
                         </div>
-                        {{-- Ganti '123' dengan variabel aktual dari controller Anda, contoh: $total_barang --}}
-                        <div class="h5 mb-0 font-weight-bold">123</div>
-                        <small><a href="{{ route('barang.index') }}" class="text-white">Lihat Data Barang &rarr;</a></small>
+                        <div class="h5 mb-0 font-weight-bold">{{ $total_barang }}</div>
+                        {{-- <small><a href="{{ route('barang.index') }}" class="text-white">Lihat Data Barang &rarr;</a></small> --}}
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-box-open fa-2x"></i> {{-- Icon barang --}}
+                        <i class="fas fa-box-open fa-2x"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- 2. Kotak Jumlah Kategori --}}
-    <div class="col-xl-3 col-md-6 mb-4">
+    {{-- 2. Kotak Jumlah Kategori (Hijau) --}}
+    <div class="col-xl-4 col-md-6 mb-4">
         <div class="card border-left-success shadow h-100 py-2" style="background-color: #10b981; color: white;">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -35,91 +34,157 @@
                         <div class="text-xs font-weight-bold text-uppercase mb-1">
                             Jumlah Kategori
                         </div>
-                        {{-- Ganti '15' dengan variabel aktual dari controller Anda, contoh: $total_kategori --}}
-                        <div class="h5 mb-0 font-weight-bold">15</div>
-                        <small><a href="{{ route('kategori.index') }}" class="text-white">Lihat Data Kategori &rarr;</a></small>
+                        <div class="h5 mb-0 font-weight-bold">{{ $total_kategori }}</div>
+                        {{-- <small><a href="{{ route('kategori.index') }}" class="text-white">Lihat Data Kategori &rarr;</a></small> --}}
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-tags fa-2x"></i> {{-- Icon kategori --}}
+                        <i class="fas fa-tags fa-2x"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- 3. Kotak Jumlah Sales/Transaksi --}}
-    <div class="col-xl-3 col-md-6 mb-4">
+    {{-- 3. Kotak Jumlah Sales (Kuning) --}}
+    <div class="col-xl-4 col-md-6 mb-4">
         <div class="card border-left-info shadow h-100 py-2" style="background-color: #f59e0b; color: white;">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-uppercase mb-1">
-                            Total Transaksi (Bulan Ini)
+                            Jumlah Sales
                         </div>
-                        {{-- Ganti '24' dengan variabel aktual dari controller Anda, contoh: $total_sales_bulan_ini --}}
-                        <div class="h5 mb-0 font-weight-bold">24</div>
-                        <small><a href="{{ route('sales.index') }}" class="text-white">Lihat Riwayat Sales &rarr;</a></small>
+                        <div class="h5 mb-0 font-weight-bold">{{ $total_sales }}</div>
+                        {{-- <small><a href="{{ route('sales.index') }}" class="text-white">Lihat Data Sales &rarr;</a></small> --}}
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-shopping-cart fa-2x"></i> {{-- Icon sales --}}
+                        <i class="fas fa-users fa-2x"></i> {{-- Icon Sales --}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    {{-- 4. Kotak Pendapatan Tahunan (Opsional, Meniru Gambar Pertama) --}}
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2" style="background-color: #ef4444; color: white;">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-uppercase mb-1">
-                            Pendapatan Tahunan
-                        </div>
-                        {{-- Ganti '$215,000' dengan variabel aktual --}}
-                        <div class="h5 mb-0 font-weight-bold">Rp215.000.000</div>
-                        <small><a href="#" class="text-white">Lihat Laporan Keuangan &rarr;</a></small>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 
-{{-- Tambahkan bagian untuk chart/grafik di bawahnya (seperti pada gambar pertama) --}}
+{{-- Grafik/Chart --}}
 <div class="row">
-    {{-- Contoh Chart/Grafik 1: Earnings Breakdown --}}
+
+    {{-- Chart Kiri: Total Stok Barang Saat Ini (Gunakan Bar/Doughnut Chart) --}}
     <div class="col-lg-6 mb-4">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Earnings Breakdown</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Distribusi Stok per Item Barang</h6>
             </div>
             <div class="card-body">
-                {{-- Di sini tempat Anda menaruh elemen <canvas> untuk chart --}}
-                <p>Area untuk grafik kenaikan pendapatan (seperti garis biru di gambar pertama).</p>
-                <div style="height: 300px;"></div>
+                <p class="text-center h1 font-weight-bold">{{ array_sum($item_stok_data) }} Unit</p>
+                <p class="text-center text-muted">Proporsi stok setiap barang yang ada di gudang.</p>
+                <div style="height: 350px;">
+                    <canvas id="itemStokChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
-    {{-- Contoh Chart/Grafik 2: Monthly Revenue --}}
+    {{-- Chart Kanan: Jumlah Barang per Kategori (Gunakan Pie/Bar Chart) --}}
     <div class="col-lg-6 mb-4">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Monthly Revenue</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Jumlah Item Barang per Kategori</h6>
             </div>
             <div class="card-body">
-                {{-- Di sini tempat Anda menaruh elemen <canvas> untuk chart --}}
-                <p>Area untuk grafik batang pendapatan bulanan (seperti grafik batang di gambar pertama).</p>
-                <div style="height: 300px;"></div>
+                <div style="height: 445px;">
+                    <canvas id="barangPerKategoriChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
 
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const kategoriLabels = @json($kategori_labels);
+    const kategoriData = @json($kategori_data);
+    const itemLabels = @json($item_labels);
+    const itemStokData = @json($item_stok_data);
+    
+    function getRandomColors(count) {
+        const colors = [];
+        for (let i = 0; i < count; i++) {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            colors.push(`rgba(${r},${g},${b}, 0.7)`);
+        }
+        return colors;
+    }
+    const ctxStok = document.getElementById('itemStokChart');
+    if (ctxStok) {
+        new Chart(ctxStok, {
+            type: 'doughnut',
+            data: {
+                labels: itemLabels, 
+                datasets: [{
+                    data: itemStokData, 
+                    backgroundColor: getRandomColors(itemLabels.length), 
+                    hoverOffset: 4
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: false,
+                    }
+                }
+            }
+        });
+    }
+
+    const ctxKategori = document.getElementById('barangPerKategoriChart');
+    if (ctxKategori) {
+        new Chart(ctxKategori, {
+            type: 'bar',
+            data: {
+                labels: kategoriLabels,
+                datasets: [{
+                    label: 'Jumlah Item',
+                    data: kategoriData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(153, 102, 255, 0.5)',
+                        'rgba(255, 159, 64, 0.5)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+</script>
 @endsection

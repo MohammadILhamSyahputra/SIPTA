@@ -1,11 +1,11 @@
-@extends('layouts.master') {{-- Menggunakan layout 'layouts.master' sesuai permintaan Anda --}}
+@extends('layouts.master') 
 
 @section('content')
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
-            <h2 class="text-center mb-1 text-primary font-weight-bold">Laporan Stok Barang</h2>
-            <p class="text-center text-muted mb-4">Pergerakan Stok Berdasarkan Filter Tanggal</p>
+            <h2 class="text-center mb-1 text-primary font-weight-bold">Laporan Barang Terlaris</h2>
+            <p class="text-center text-muted mb-4">Hasil Penjualan Berdasarkan Filter Tanggal</p>
 
             <div class="card shadow p-4 border-0 mb-4">
                 {{-- FORM FILTER TANGGAL --}}
@@ -39,46 +39,38 @@
                     @endif
                 </div>
                 
+                {{-- CHART BARANG TERLARIS --}}
+                <div class="mb-4">
+                    <div class="card shadow p-3">
+                        <h5 class="text-center text-primary font-weight-bold mb-3">Top 10 Barang Terlaris</h5>
+                        <div style="height: 400px;"> <canvas id="barangTerlarisChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
-                    {{-- Perlu 2 baris header karena ada gabungan kolom (Stok Awal, Akhir, Masuk, Keluar) --}}
                     <table class="table table-bordered table-hover text-center align-middle" style="min-width: 900px;">
                         <thead class="bg-light text-dark">
                             <tr>
-                                <th rowspan="2" class="p-2 align-middle">Kode Barang</th>
-                                <th rowspan="2" class="p-2 align-middle">Nama Barang</th>
-                                <th rowspan="2" class="p-2 align-middle">Harga Beli (Rp)</th>
-                                <th rowspan="2" class="p-2 align-middle">Harga Jual (Rp)</th>
-                                <th rowspan="2" class="p-2 align-middle">Stok Awal</th> 
-                                <th colspan="2" class="p-2">Pergerakan Periode</th>
-                                <th rowspan="2" class="p-2 align-middle text-primary">Stok Akhir</th> 
-                            </tr>
-                            <tr>
-                                <th class="p-2 text-success">Stok Masuk</th>
-                                <th class="p-2 text-danger">Stok Terjual</th>
+                                <th class="p-2 align-middle">Kode Barang</th>
+                                <th class="p-2 align-middle">Nama Barang</th>
+                                <th class="p-2 align-middle">Harga Beli (Rp)</th>
+                                <th class="p-2 align-middle">Harga Jual (Rp)</th>
+                                <th class="p-2 text-danger">QTY Terjual (Unit)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- Loop melalui data laporan yang sudah dihitung di Controller (variabel $laporanData) --}}
                             @forelse ($laporanData as $data)
                             <tr>
                                 <td class="font-weight-bold">{{ $data->kode_barang }}</td>
                                 <td class="text-left">{{ $data->nama }}</td>
-                                
                                 <td class="text-right">{{ number_format($data->harga_beli, 0, ',', '.') }}</td>
                                 <td class="text-right">{{ number_format($data->harga_jual, 0, ',', '.') }}</td>
-                                
-                                <td>{{ $data->stok_awal }}</td>
-                                
-                                <td class="text-success font-weight-bold">{{ $data->total_masuk }}</td>
                                 <td class="text-danger font-weight-bold">{{ $data->total_terjual }}</td>
-                                
-                                <td class="font-weight-bold text-primary">
-                                    {{ $data->stok_akhir }} 
-                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center text-danger">Tidak ada data barang atau pergerakan dalam periode yang dipilih.</td>
+                                <td colspan="5" class="text-center text-danger">Tidak ada data penjualan dalam periode yang dipilih.</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -88,4 +80,59 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const chartLabels = @json($chartLabels);
+    const chartData = @json($chartData);
+
+    const ctxBarangTerlaris = document.getElementById('barangTerlarisChart');
+    if (ctxBarangTerlaris) {
+        new Chart(ctxBarangTerlaris, {
+            type: 'bar',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'QTY Terjual',
+                    data: chartData,
+                    backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                indexAxis: 'y', 
+                plugins: {
+                    legend: {
+                        display: false 
+                    },
+                    title: {
+                        display: false,
+                        text: 'Top 10 Barang Terlaris'
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'QTY Terjual'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Nama Barang'
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
 @endsection
