@@ -163,6 +163,6 @@ class BarangController extends Controller
         }
 
         // 5. Kirim data dan tanggal filter ke view
-        return view('laporan barang.laporan_stok', compact('laporanData', 'tglMulai', 'tglAkhir'));
+        return view('laporan_barang.laporan_stok', compact('laporanData', 'tglMulai', 'tglAkhir'));
     }
 }

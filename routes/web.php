@@ -15,52 +15,54 @@ use App\Http\Controllers\LaporanSalesController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('barang', BarangController::class);
+    Route::resource('sales', SalesController::class);
+    Route::resource('kategori', KategoriController::class);
+    Route::resource('riwayat-sales', RiwayatSalesController::class);
+    Route::get('riwayat-sales/{riwayat_sales_id}/detail/create',
+        [DetailRiwayatSalesController::class, 'create'])->name('detail-riwayat-sales.create');
+    Route::post('riwayat-sales/detail/store',
+        [DetailRiwayatSalesController::class, 'store'])->name('detail-riwayat-sales.store');
+    Route::get('detail-riwayat-sales/{id}/edit',
+        [DetailRiwayatSalesController::class, 'edit'])->name('detail-riwayat-sales.edit');
+    Route::put('detail-riwayat-sales/{id}',
+        [DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
+
+});
+
+Route::middleware(['auth', 'owner'])->group(function () {
+    Route::get('laporan-stok-barang', [BarangController::class, 'laporanStok'])
+        ->name('laporan_barang.laporan_stok');
+    Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
+    Route::post('/laporan-penjualan', [LaporanPenjualanController::class, 'filter'])->name('laporan.penjualan.filter');
+
+    Route::get('/laporan-penjualan/export-pdf', [LaporanPenjualanController::class, 'exportPdf'])->name('laporan.penjualan.exportPdf');
+});
+
 Route::resource('laporan-sales', SalesController::class);
-// ======================================
-// BARANG & LAPORAN STOK
-// ======================================
-Route::resource('barang', BarangController::class);
 
-// Route KHUSUS untuk Laporan Stok (tanpa prefix 'owner')
-Route::get('laporan-stok-barang', [BarangController::class, 'laporanStok'])
-    ->name('laporan barang.laporan_stok');
+Route::middleware(['auth', 'kasir'])->group(function () {
+    Route::resource('kategori', KategoriController::class);
+});
 
-
-// ======================================
-// SALES
-// ======================================
-Route::resource('sales', SalesController::class);
-
-
-// ======================================
-// KATEGORI
-// ======================================
-Route::resource('kategori', KategoriController::class);
+// Route::resource('barang', BarangController::class);
+// Route::resource('sales', SalesController::class);
+// Route::resource('kategori', KategoriController::class);
+// Route::resource('riwayat-sales', RiwayatSalesController::class);
+// Route::get('riwayat-sales/{riwayat_sales_id}/detail/create',
+//     [DetailRiwayatSalesController::class, 'create'])->name('detail-riwayat-sales.create');
+// Route::post('riwayat-sales/detail/store',
+//     [DetailRiwayatSalesController::class, 'store'])->name('detail-riwayat-sales.store');
+// Route::get('detail-riwayat-sales/{id}/edit',
+//     [DetailRiwayatSalesController::class, 'edit'])->name('detail-riwayat-sales.edit');
+// Route::put('detail-riwayat-sales/{id}',
+//     [DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
 
 
-// ======================================
-// RIWAYAT SALES
-// ======================================
-Route::resource('riwayat-sales', RiwayatSalesController::class);
-
-
-// ======================================
-// DETAIL RIWAYAT SALES (Custom Routes)
-// ======================================
-Route::get('riwayat-sales/{riwayat_sales_id}/detail/create',
-    [DetailRiwayatSalesController::class, 'create'])->name('detail-riwayat-sales.create');
-Route::post('riwayat-sales/detail/store',
-    [App\Http\Controllers\DetailRiwayatSalesController::class, 'store'])->name('detail-riwayat-sales.store');
-Route::get('detail-riwayat-sales/{id}/edit',
-    [\App\Http\Controllers\DetailRiwayatSalesController::class, 'edit'])->name('detail-riwayat-sales.edit');
-Route::put('detail-riwayat-sales/{id}',
-    [\App\Http\Controllers\DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
-
-
-// ======================================
-// TRANSAKSI
-// ======================================
 Route::prefix('transaksi')->name('transaksi.')->group(function () {
     Route::get('/', [TransaksiController::class, 'index'])->name('index');
     Route::get('/create', [TransaksiController::class, 'create'])->name('create');
@@ -68,10 +70,6 @@ Route::prefix('transaksi')->name('transaksi.')->group(function () {
     Route::delete('/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
 });
 
-
-// ======================================
-// DETAIL TRANSAKSI
-// ======================================
 Route::prefix('detail-transaksi')->name('detail-transaksi.')->group(function () {
     Route::get('/', [DetailTransaksiController::class, 'index'])->name('index');
     Route::get('/create', [DetailTransaksiController::class, 'create'])->name('create');
@@ -87,7 +85,7 @@ Route::prefix('detail-riwayat-sales')->name('detail-riwayat-sales.')->group(func
     Route::delete('/{id}', [DetailRiwayatSalesController::class, 'destroy'])->name('destroy');
 });
 
-Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
-Route::post('/laporan-penjualan', [LaporanPenjualanController::class, 'filter'])->name('laporan.penjualan.filter');
+// Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
+// Route::post('/laporan-penjualan', [LaporanPenjualanController::class, 'filter'])->name('laporan.penjualan.filter');
 
-Route::get('/laporan-penjualan/export-pdf', [LaporanPenjualanController::class, 'exportPdf'])->name('laporan.penjualan.exportPdf');
+// Route::get('/laporan-penjualan/export-pdf', [LaporanPenjualanController::class, 'exportPdf'])->name('laporan.penjualan.exportPdf');

@@ -9,7 +9,7 @@
 
             <div class="card shadow p-4 border-0 mb-4">
                 {{-- FORM FILTER TANGGAL --}}
-                <form action="{{ route('laporan barang.laporan_stok') }}" method="GET" class="mb-4">
+                <form action="{{ route('laporan_barang.laporan_stok') }}" method="GET" class="mb-4">
                     <div class="row align-items-end">
                         <div class="col-md-5">
                             <label for="tgl_mulai" class="form-label font-weight-bold">Tanggal Mulai:</label>

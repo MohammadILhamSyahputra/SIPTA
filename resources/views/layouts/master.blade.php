@@ -70,7 +70,7 @@
                 <img src="{{ asset('template/img/logosipta.png') }}" alt="Logo SIPTA" class="me-2" style="height: 30px; width: auto;"><b>SIPTA</b>
             </div>
             <div class="list-group list-group-flush sidebar-menu">
-                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action">
+                <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action {{ Request::is('dashboard*') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
 
@@ -100,6 +100,12 @@
                     <i class="fas fa-chart-line me-2"></i> Riwayat Sales
                 </a> --}}
 
+                <a href="{{ route('laporan_barang.laporan_stok') }}" class="list-group-item list-group-item-action {{ Request::is('laporan-stok-barang*') ? 'active' : '' }}">
+                    <i class="fas fa-boxes me-2"></i> Laporan Stok barang
+                </a>
+                <a href="/laporan-penjualan" class="list-group-item list-group-item-action {{ Request::is('laporan-penjualan*') ? 'active' : '' }}">
+                    <i class="fas fa-boxes me-2"></i> Laporan Penjualan
+                </a>
             </div>
         </div>
         <div id="page-content-wrapper" class="pt-5">
