@@ -15,13 +15,14 @@
                         <i class="fas fa-user-circle me-1 fa-xl"></i>
                         <b>{{ Auth::user()->name ?? 'Putri Ardiyana' }}</b>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="/profile">Profile</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown"
+                    style="background-color: #dc3545; color: white; border-radius: 4px; margin: 5px;">
+                        {{-- <li><a class="dropdown-item" href="/profile">Profile</a></li> --}}
+                        {{-- <li><hr class="dropdown-divider"></li> --}}
                         <li>
                             <a class="dropdown-item" href="/logout" 
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Logout
+                                <b>LOGOUT</b>
                             </a>
                             <form id="logout-form" action="/logout" method="POST" style="display: none;">
                                 @csrf

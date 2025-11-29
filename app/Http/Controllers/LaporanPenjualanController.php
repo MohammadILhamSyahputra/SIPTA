@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\DetailPenjualan; // Ganti dari SaleDetail
+//use App\Models\DetailPenjualan; // Ganti dari SaleDetail
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use PDF;
 
@@ -20,11 +21,12 @@ class LaporanPenjualanController extends Controller
         $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         $data = $this->getLaporanData($startDate, $endDate);
-        return view('laporan_penjualan', $data);
+        
+        return view('laporan_penjualan', $data); 
     }
 
     /**
-     * Memfilter laporan berdasarkan rentang tanggal.
+     * Memfilter laporan berdasarkan rentang tanggal yang dikirim dari form.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
@@ -43,6 +45,12 @@ class LaporanPenjualanController extends Controller
         return view('laporan_penjualan', $data);
     }
 
+    /**
+     * Mengekspor laporan sebagai file PDF.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function exportPdf(Request $request)
     {
         $request->validate([
@@ -52,53 +60,75 @@ class LaporanPenjualanController extends Controller
 
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        
         $data = $this->getLaporanData($startDate, $endDate);
+        
         $pdf = PDF::loadView('pdf.laporan_penjualan_pdf', $data);
         $fileName = 'Laporan_Penjualan_' . $startDate . '_s_d_' . $endDate . '.pdf';
+        
         return $pdf->download($fileName);
     }
 
     /**
-     * Mengambil dan memproses data laporan.
+     * Mengambil dan memproses data laporan (Omset & Keuntungan).
      *
      * @param string $startDate
      * @param string $endDate
-     * @return \Illuminate\View\View
+     * @return array
      */
     private function getLaporanData($startDate, $endDate)
     {
-        $penjualanDetails = DetailPenjualan::with(['barang.kategori'])
-            ->whereHas('transaksi', function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('tanggal', [$startDate, $endDate]);
-            })
-            ->get();
+        $startDateTime = Carbon::parse($startDate)->startOfDay();
+        $endDateTime = Carbon::parse($endDate)->endOfDay();
 
+        $penjualanDetails = DB::table('detail_transaksi as dt')
+            ->select(
+                'b.kode_barang',
+                'b.nama as nama_barang',
+                'b.harga_beli',
+                'k.nama_kategori as kategori',
+                'dt.qty', 
+                'dt.harga_satuan',
+                DB::raw('(dt.qty * dt.harga_satuan) as total_penjualan'),
+                DB::raw('((dt.harga_satuan - b.harga_beli) * dt.qty) as untung')
+            )
+            ->join('transaksi as t', 'dt.id_transaksi', '=', 't.id')
+            ->join('barang as b', 'dt.id_barang', '=', 'b.id')
+            ->join('kategori as k', 'b.id_kategori', '=', 'k.id')
+            ->whereBetween('t.tanggal', [$startDateTime, $endDateTime])
+            ->get();
+            
         $tableData = $penjualanDetails->map(function ($detail) {
-            $hargaBeli = $detail->barang->harga_beli ?? 0;
-            $untungPerItem = $detail->harga_satuan - $hargaBeli;
-            $totalUntung = $untungPerItem * $detail->jumlah;
+            $totalPenjualan = $detail->total_penjualan;
+            $totalUntung = $detail->untung;
+
+            $marginPersentase = ($totalPenjualan > 0) ? ($totalUntung / $totalPenjualan) * 100 : 0;
 
             return [
-                'kode_barang' => $detail->barang->kode_barang,
-                'nama_barang' => $detail->barang->nama_barang,
-                'kategori' => $detail->barang->kategori->nama_kategori,
-                'jumlah' => $detail->jumlah,
+                'kode_barang' => $detail->kode_barang,
+                'nama_barang' => $detail->nama_barang,
+                'kategori' => $detail->kategori,
+                'jumlah' => $detail->qty,
                 'harga_satuan' => $detail->harga_satuan,
-                'total_penjualan' => $detail->jumlah * $detail->harga_satuan,
+                'total_penjualan' => $totalPenjualan,
                 'untung' => $totalUntung,
+                'margin_persentase' => $marginPersentase,
             ];
         });
 
         $totalOmset = $tableData->sum('total_penjualan');
         $totalUntung = $tableData->sum('untung');
+        
+        $totalMarginPersentase = ($totalOmset > 0) ? ($totalUntung / $totalOmset) * 100 : 0;
 
         $startDateFormatted = Carbon::parse($startDate)->locale('id')->translatedFormat('d F Y');
         $endDateFormatted = Carbon::parse($endDate)->locale('id')->translatedFormat('d F Y');
 
         return [
-            'tableData' => $tableData,
+            'tableData' => $tableData, 
             'totalOmset' => $totalOmset,
             'totalUntung' => $totalUntung,
+            'totalMarginPersentase' => $totalMarginPersentase, 
             'startDate' => $startDate,
             'endDate' => $endDate,
             'startDateFormatted' => $startDateFormatted,

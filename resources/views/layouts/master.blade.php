@@ -74,20 +74,22 @@
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
 
+                @if (Auth::check() && Auth::user()->userType === 'admin')
                 {{-- <div class="text-secondary small mt-3 px-3">MASTER DATA</div> --}}
-                <a href="{{ route('barang.index') }}" class="list-group-item list-group-item-action {{ Request::is('barang*') ? 'active' : '' }}">
-                    <i class="fas fa-boxes me-2"></i> Pengelolaan Barang
-                </a>
-                <a href="{{ route('kategori.index') }}" class="list-group-item list-group-item-action {{ Request::is('kategori*') ? 'active' : '' }}">
-                    <i class="fas fa-tags me-2"></i> Kategori
-                </a>
-                <a href="{{ route('sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('sales*') ? 'active' : '' }}">
-                    <i class="fas fa-users me-2"></i> Sales
-                </a>
+                    <a href="{{ route('barang.index') }}" class="list-group-item list-group-item-action {{ Request::is('barang*') ? 'active' : '' }}">
+                        <i class="fas fa-boxes me-2"></i> Pengelolaan Barang
+                    </a>
+                    <a href="{{ route('kategori.index') }}" class="list-group-item list-group-item-action {{ Request::is('kategori*') ? 'active' : '' }}">
+                        <i class="fas fa-tags me-2"></i> Kategori
+                    </a>
+                    <a href="{{ route('sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('sales*') ? 'active' : '' }}">
+                        <i class="fas fa-users me-2"></i> Sales
+                    </a>
 
-                <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('riwayat-sales*') || Request::is('detail-riwayat-sales*') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-plus me-2"></i> Riwayat Sales
-                </a>
+                    <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('riwayat-sales*') || Request::is('detail-riwayat-sales*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-plus me-2"></i> Riwayat Sales
+                    </a>
+                @endif
 
                 {{-- <div class="text-secondary small mt-3 px-3">TRANSAKSI & RIWAYAT</div>
                 <a href="{{ route('transaksi.create') }}" class="list-group-item list-group-item-action">
@@ -100,12 +102,14 @@
                     <i class="fas fa-chart-line me-2"></i> Riwayat Sales
                 </a> --}}
 
-                <a href="{{ route('laporan_barang.laporan_stok') }}" class="list-group-item list-group-item-action {{ Request::is('laporan-stok-barang*') ? 'active' : '' }}">
-                    <i class="fas fa-boxes me-2"></i> Laporan Barang Terlaris
-                </a>
-                <a href="/laporan-penjualan" class="list-group-item list-group-item-action {{ Request::is('laporan-penjualan*') ? 'active' : '' }}">
-                    <i class="fas fa-boxes me-2"></i> Laporan Penjualan
-                </a>
+                @if (Auth::check() && Auth::user()->userType === 'owner')
+                    <a href="{{ route('laporan_barang.laporan_stok') }}" class="list-group-item list-group-item-action {{ Request::is('laporan-stok-barang*') ? 'active' : '' }}">
+                        <i class="fas fa-chart-line me-2"></i> Laporan Barang Terlaris
+                    </a>
+                    <a href="/laporan-penjualan" class="list-group-item list-group-item-action {{ Request::is('laporan-penjualan*') ? 'active' : '' }}">
+                        <i class="fas fa-receipt me-2"></i> Laporan Penjualan
+                    </a>
+                @endif
             </div>
         </div>
         <div id="page-content-wrapper" class="pt-5">

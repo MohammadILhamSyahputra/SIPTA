@@ -77,7 +77,7 @@
             </div>
             <div class="card-body">
                 <p class="text-center h1 font-weight-bold">{{ array_sum($item_stok_data) }} Unit</p>
-                <p class="text-center text-muted">Proporsi stok setiap barang yang ada di gudang.</p>
+                <p class="text-center text-muted">Proporsi stok setiap barang yang ada di toko saat ini.</p>
                 <div style="height: 350px;">
                     <canvas id="itemStokChart"></canvas>
                 </div>
@@ -154,7 +154,7 @@
             data: {
                 labels: kategoriLabels,
                 datasets: [{
-                    label: 'Jumlah Item',
+                    label: 'Jumlah Barang',
                     data: kategoriData,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.5)',
