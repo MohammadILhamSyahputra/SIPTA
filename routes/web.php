@@ -46,6 +46,9 @@ Route::middleware(['auth', 'owner'])->group(function () {
 Route::resource('laporan-sales', SalesController::class);
 
 Route::middleware(['auth', 'kasir'])->group(function () {
+    Route::get('cashier', function () {
+        return view('cashier');
+    })->name('cashier');
     Route::resource('kategori', KategoriController::class);
 });
 
