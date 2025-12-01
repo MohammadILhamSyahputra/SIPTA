@@ -13,10 +13,6 @@ class Transaksi extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['total_harga','total_bayar','kembalian','tanggal'];
 
-    protected $casts = [
-        'tanggal' => 'datetime'
-    ];
-
     public function detail()
     {
         return $this->hasMany(DetailTransaksi::class, 'id_transaksi');

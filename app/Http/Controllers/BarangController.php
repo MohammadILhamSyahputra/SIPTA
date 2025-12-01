@@ -10,21 +10,6 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
-
-    public function search(Request $request)
-    {
-        $query = $request->get('q');
-        
-        $barang = Barang::where('nama', 'LIKE', "%{$query}%")
-            ->orWhere('kode_barang', 'LIKE', "%{$query}%")
-            ->select('id', 'kode_barang', 'nama', 'harga_jual as harga', 'stok')
-            ->where('stok', '>', 0) // Hanya tampilkan yang ada stoknya
-            ->limit(10)
-            ->get();
-            
-        return response()->json($barang);
-    }
-
     public function index()
     {
         $barang = Barang::with(['kategori', 'sales'])->get();
