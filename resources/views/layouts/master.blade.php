@@ -110,6 +110,12 @@
                         <i class="fas fa-receipt me-2"></i> Laporan Penjualan
                     </a>
                 @endif
+
+                @if (Auth::check() && Auth::user()->userType === 'kasir')
+                    <a href="{{ route('kasir.index') }}" class="list-group-item list-group-item-action {{ Request::is('kasir*') ? 'active' : '' }}">
+                        <i class="fas fa-cash-register me-2"></i> Point of Sale (POS)
+                    </a>
+                @endif
             </div>
         </div>
         <div id="page-content-wrapper" class="pt-5">

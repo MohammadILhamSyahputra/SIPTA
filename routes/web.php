@@ -11,6 +11,7 @@ use App\Http\Controllers\RiwayatSalesController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanPenjualanController;
 use App\Http\Controllers\LaporanSalesController;
+use App\Http\Controllers\KasirController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -47,6 +48,14 @@ Route::resource('laporan-sales', SalesController::class);
 
 Route::middleware(['auth', 'kasir'])->group(function () {
     Route::resource('kategori', KategoriController::class);
+    
+    // Kasir POS Routes
+    Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
+    Route::get('/kasir/test', [KasirController::class, 'test'])->name('kasir.test');
+    Route::get('/kasir/search', [KasirController::class, 'search'])->name('kasir.search');
+    Route::post('/kasir/store', [KasirController::class, 'store'])->name('kasir.store');
+    Route::get('/kasir/history', [KasirController::class, 'history'])->name('kasir.history');
+    Route::delete('/kasir/{id}', [KasirController::class, 'destroy'])->name('kasir.destroy');
 });
 
 // Route::resource('barang', BarangController::class);

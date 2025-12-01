@@ -12,6 +12,10 @@ class Transaksi extends Model
     protected $table = 'transaksi';
     protected $primaryKey = 'id';
     protected $fillable = ['total_harga','total_bayar','kembalian','tanggal'];
+    
+    protected $casts = [
+        'tanggal' => 'datetime',
+    ];
 
     public function detail()
     {
