@@ -23,6 +23,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('barang', BarangController::class);
     Route::resource('sales', SalesController::class);
     Route::resource('kategori', KategoriController::class);
+});
+
+Route::middleware(['auth', 'owner'])->group(function () {
+    Route::get('laporan-stok-barang', [BarangController::class, 'laporanStok'])
+        ->name('laporan_barang.laporan_stok');
+    Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
+    Route::post('/laporan-penjualan', [LaporanPenjualanController::class, 'filter'])->name('laporan.penjualan.filter');
+
+    Route::get('/laporan-penjualan/export-pdf', [LaporanPenjualanController::class, 'exportPdf'])->name('laporan.penjualan.exportPdf');
     Route::resource('riwayat-sales', RiwayatSalesController::class);
     Route::get('riwayat-sales/{riwayat_sales_id}/detail/create',
         [DetailRiwayatSalesController::class, 'create'])->name('detail-riwayat-sales.create');
@@ -33,15 +42,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('detail-riwayat-sales/{id}',
         [DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
 
-});
-
-Route::middleware(['auth', 'owner'])->group(function () {
-    Route::get('laporan-stok-barang', [BarangController::class, 'laporanStok'])
-        ->name('laporan_barang.laporan_stok');
-    Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
-    Route::post('/laporan-penjualan', [LaporanPenjualanController::class, 'filter'])->name('laporan.penjualan.filter');
-
-    Route::get('/laporan-penjualan/export-pdf', [LaporanPenjualanController::class, 'exportPdf'])->name('laporan.penjualan.exportPdf');
 });
 
 Route::resource('laporan-sales', SalesController::class);
