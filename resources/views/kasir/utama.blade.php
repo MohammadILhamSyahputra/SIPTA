@@ -169,7 +169,7 @@
     }
 
     .btn-riwayat:hover {
-        background: #0056b3;
+        background: #28a745;
     }
 
     .btn-kembali {
