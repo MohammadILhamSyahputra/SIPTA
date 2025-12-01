@@ -17,7 +17,7 @@
                         <input type="date" name="end_date" id="end_date" class="form-control" value="{{ $endDate ?? old('end_date') }}" required>
                     </div>
                     <div class="col-md-4 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary mr-2">Tampilkan Laporan</button>
+                        <button type="submit" class="btn btn-success mr-2">Tampilkan Laporan</button>
                         <span class="mx-1"></span>
                         <a href="#" id="exportPdfLink" class="btn btn-danger">Export to PDF</a>
                     </div>
@@ -29,7 +29,7 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center bg-light">
-            <h6 class="m-0 font-weight-bold text-primary">Data Laporan Penjualan</h6>
+            <h6 class="m-0 font-weight-bold text-success">Data Laporan Penjualan</h6>
             <span class="text-muted small">Periode: {{ $startDateFormatted ?? '-' }} - {{ $endDateFormatted ?? '-' }}</span>
         </div>
         <div class="card-body">
@@ -85,7 +85,7 @@
                             <th class="text-right">{{ 'Rp ' . number_format($totalUntung, 0, ',', '.') }}</th>
                             
                             {{-- Total Margin Persentase --}}
-                            <th class="text-right font-weight-bold text-primary">
+                            <th class="text-right font-weight-bold text-success">
                                 {{ number_format($totalMarginPersentase, 2, ',', '.') . ' %' }} 
                             </th>
                         </tr>

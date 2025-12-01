@@ -66,9 +66,10 @@
 
     <div class="d-flex" id="wrapper">
         <div class="border-end border-secondary" id="sidebar-wrapper">
-            <div class="sidebar-heading border-bottom p-3 text-white bg-dark">
-                <img src="{{ asset('template/img/logosipta.png') }}" alt="Logo SIPTA" class="me-2" style="height: 30px; width: auto;"><b>SIPTA</b>
-            </div>
+            <div class="sidebar-heading border-bottom text-white bg-dark d-flex align-items-center" style="padding: 1.20rem 1.5rem;">
+                <img src="{{ asset('template/img/logosipta.png') }}" alt="Logo SIPTA" class="me-3" style="height: 60px; width: auto;">
+                <b style="font-size: 1.5rem; line-height: 1;">SIPTA</b>
+            </div>   
             <div class="list-group list-group-flush sidebar-menu">
                 <a href="{{ route('dashboard') }}" class="list-group-item list-group-item-action {{ Request::is('dashboard*') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard

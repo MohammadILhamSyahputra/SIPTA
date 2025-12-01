@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
-            <h2 class="text-center mb-1 text-primary font-weight-bold">Laporan Barang Terlaris</h2>
+            <h2 class="text-center mb-1 text-success font-weight-bold">Laporan Barang Terlaris</h2>
             <p class="text-center text-muted mb-4">Hasil Penjualan Berdasarkan Filter Tanggal</p>
 
             <div class="card shadow p-4 border-0 mb-4">
@@ -22,7 +22,7 @@
                                 value="{{ $tglAkhir ?? date('Y-m-d') }}" required>
                         </div>
                         <div class="col-md-2 mt-3 mt-md-0">
-                            <button type="submit" class="btn btn-primary w-100">
+                            <button type="submit" class="btn btn-success w-100">
                                 <i class="fas fa-filter mr-2"></i> Tampilkan
                             </button>
                         </div>
@@ -42,7 +42,7 @@
                 {{-- CHART BARANG TERLARIS --}}
                 <div class="mb-4">
                     <div class="card shadow p-3">
-                        <h5 class="text-center text-primary font-weight-bold mb-3">Top 10 Barang Terlaris</h5>
+                        <h5 class="text-center text-succsess font-weight-bold mb-3">Top 10 Barang Terlaris</h5>
                         <div style="height: 400px;"> <canvas id="barangTerlarisChart"></canvas>
                         </div>
                     </div>

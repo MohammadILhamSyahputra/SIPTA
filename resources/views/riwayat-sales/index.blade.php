@@ -6,14 +6,14 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Riwayat Kunjungan Sales</h1>
-        <a href="{{ route('riwayat-sales.create') }}" class="btn btn-primary shadow-sm">
+        <a href="{{ route('riwayat-sales.create') }}" class="btn btn-success shadow-sm">
             <i class="fas fa-calendar-plus fa-sm text-white-50"></i> Tambah Jadwal Kunjungan
         </a>
     </div>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Daftar Riwayat Sales</h6>
+            <h6 class="m-0 font-weight-bold text-success">Daftar Riwayat Sales</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
