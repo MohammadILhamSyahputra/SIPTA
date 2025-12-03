@@ -90,4 +90,29 @@ class DetailRiwayatSalesController extends Controller
             ->route('riwayat-sales.show', $detail->riwayat_sales_id)
             ->with('success', 'Detail transaksi berhasil diperbarui dan stok disesuaikan!');
     }
+
+    public function destroy($id)
+    {
+        $detail = DetailRiwayatSales::findOrFail($id);
+        $riwayatSalesId = $detail->riwayat_sales_id;
+        
+        $qtyMasukDibatalkan = $detail->qty_masuk;
+        $qtyReturDibatalkan = $detail->qty_retur;
+
+        $barang = Barang::findOrFail($detail->barang_id);
+
+        $barang->stok -= $qtyMasukDibatalkan;
+
+        $barang->stok += $qtyReturDibatalkan; 
+        
+        $barang->stok = max(0, $barang->stok);
+
+        $barang->save();
+
+        $detail->delete();
+
+        return redirect()
+            ->route('riwayat-sales.show', $riwayatSalesId)
+            ->with('success', 'Detail barang berhasil dihapus dan stok telah dikembalikan!');
+    }
 }

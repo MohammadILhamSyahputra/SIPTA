@@ -69,6 +69,13 @@
                                         <a href="{{ route('detail-riwayat-sales.edit', $detail->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        <form action="{{ route('detail-riwayat-sales.destroy', $detail->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus detail barang ini? Stok barang akan disesuaikan kembali!')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus Data">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

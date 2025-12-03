@@ -114,6 +114,9 @@
                     <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('riwayat-sales*') || Request::is('detail-riwayat-sales*') ? 'active' : '' }}">
                         <i class="fas fa-calendar-plus me-2"></i> Riwayat Sales
                     </a>
+                    <a href="{{ route('user.index') }}" class="list-group-item list-group-item-action {{ Request::is('user*') ? 'active' : '' }}">
+                        <i class="fas fa-users me-2"></i> Kelola User
+                    </a>
                 @endif
 
                 @if (Auth::check() && Auth::user()->userType === 'kasir')

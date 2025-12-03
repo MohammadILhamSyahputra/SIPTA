@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-md-6">
                     <p><strong>Tanggal Kunjungan:</strong> 
-                        {{ \Carbon\Carbon::parse($detail->riwayat->tanggal_kunjungan)->translatedFormat('l, d F Y H:i') }}
+                        {{ \Carbon\Carbon::parse($detail->riwayat->tanggal_kunjungan)->locale('id')->translatedFormat('l, d F Y H:i') }}
                     </p>
                     <p><strong>Dibuat Pada:</strong> 
                         {{ \Carbon\Carbon::parse($detail->riwayat->created_at)->locale('id')->translatedFormat('d M Y') }}

@@ -12,6 +12,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanPenjualanController;
 use App\Http\Controllers\LaporanSalesController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -41,6 +42,10 @@ Route::middleware(['auth', 'owner'])->group(function () {
         [DetailRiwayatSalesController::class, 'edit'])->name('detail-riwayat-sales.edit');
     Route::put('detail-riwayat-sales/{id}',
         [DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
+    Route::delete('detail-riwayat-sales/{id}', 
+        [DetailRiwayatSalesController::class, 'destroy'])->name('detail-riwayat-sales.destroy');
+
+    Route::resource('user', UserController::class)->except(['create', 'store', 'show']);
 
 });
 
