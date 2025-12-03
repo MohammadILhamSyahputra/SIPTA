@@ -12,7 +12,7 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-primary text-white">
+        <div class="card-header py-3 bg-success text-white">
             <h6 class="m-0 font-weight-bold">Informasi Kunjungan</h6>
         </div>
         

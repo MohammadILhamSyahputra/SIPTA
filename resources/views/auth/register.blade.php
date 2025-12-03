@@ -187,7 +187,7 @@
             <div class="card-body p-0">
                 <div class="row">
                     <div class="col-lg-3 d-none d-lg-block bg-register-image">
-                        <img src="{{ asset('template/img/LogoSipta.jpg') }}" alt="Logo Sipta">
+                        <img src="{{ asset('template/img/logosipta.png') }}" alt="Logo Sipta">
                     </div>
                     <div class="col-lg-9">
                         <div class="p-5">

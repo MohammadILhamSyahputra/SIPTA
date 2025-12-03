@@ -11,7 +11,7 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-primary text-white">
+        <div class="card-header py-3 bg-success text-white">
             <h6 class="m-0 font-weight-bold">Riwayat Kunjungan</h6>
         </div>
         <div class="card-body">
@@ -35,7 +35,7 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-info text-white">
+        <div class="card-header py-3 bg-success text-white">
             <h6 class="m-0 font-weight-bold">Input Item Transaksi Baru</h6>
         </div>
         
@@ -95,7 +95,7 @@
                 <a href="{{ route('riwayat-sales.show', $riwayat->id) }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Simpan Item Transaksi
                 </button>
             </div>

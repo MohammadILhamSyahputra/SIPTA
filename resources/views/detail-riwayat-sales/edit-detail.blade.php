@@ -11,7 +11,7 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-primary text-white">
+        <div class="card-header py-3 bg-success text-white">
             <h6 class="m-0 font-weight-bold">Riwayat Kunjungan</h6>
         </div>
         <div class="card-body">
@@ -33,7 +33,7 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-warning text-white">
+        <div class="card-header py-3 bg-success text-white">
             <h6 class="m-0 font-weight-bold">Edit Item Transaksi (ID Detail: {{ $detail->id }})</h6>
         </div>
         
