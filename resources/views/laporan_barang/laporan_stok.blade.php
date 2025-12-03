@@ -30,7 +30,7 @@
                 </form>
                 {{-- AKHIR FORM FILTER TANGGAL --}}
 
-                <div class="card-header bg-warning text-dark font-weight-bold p-3 rounded-top mb-3">
+                <div class="card-header bg-success text-light font-weight-bold p-3 rounded-top mb-3">
                     <i class="fas fa-chart-bar mr-2"></i> Hasil Laporan
                     @if(isset($tglMulai) && isset($tglAkhir))
                         <span class="float-right badge badge-primary p-2">

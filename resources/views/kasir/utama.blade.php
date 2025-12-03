@@ -784,7 +784,7 @@
 
         if (uangMasuk > 0) {
             if (kembalian < 0) {
-                document.getElementById('error-uang').textContent = `Uang kurang Rp ${formatCurrency(Math.abs(kembalian))}`;
+                document.getElementById('error-uang').textContent = `Uang kurang ${formatCurrency(Math.abs(kembalian))}`;
                 document.getElementById('kembalian-display').value = '';
             } else {
                 document.getElementById('kembalian-display').value = formatCurrency(kembalian);

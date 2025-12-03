@@ -27,7 +27,7 @@
                         {{ \Carbon\Carbon::parse($riwayat->tanggal_kunjungan)->locale('id')->translatedFormat('l, d F Y H:i') }}
                     </p>
                     <p><strong>Dibuat Pada:</strong> 
-                        {{ \Carbon\Carbon::parse($riwayat->created_at)->translatedFormat('d M Y') }}
+                        {{ \Carbon\Carbon::parse($riwayat->created_at)->locale('id')->translatedFormat('d M Y') }}
                     </p>
                 </div>
             </div>

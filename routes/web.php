@@ -44,7 +44,7 @@ Route::middleware(['auth', 'owner'])->group(function () {
 
 });
 
-Route::resource('laporan-sales', SalesController::class);
+// Route::resource('laporan-sales', SalesController::class);
 
 Route::middleware(['auth', 'kasir'])->group(function () {
     Route::resource('kategori', KategoriController::class);
