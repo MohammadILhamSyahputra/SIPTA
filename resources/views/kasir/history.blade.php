@@ -235,7 +235,7 @@
                     <div>
                         <div class="transaction-id">#{{ str_pad($trans->id, 6, '0', STR_PAD_LEFT) }}</div>
                         <div class="transaction-time">
-                            <i class="fas fa-clock me-2"></i>{{ \Carbon\Carbon::parse($trans->tanggal)->format('H:i:s') }}
+                            <i class="fas fa-clock me-2"></i>{{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('H:i:s') }}
                         </div>
                     </div>
                     <div style="text-align: right;">
@@ -279,7 +279,7 @@
 
                 <div class="transaction-footer">
                     <div style="color: #666; font-size: 0.9rem;">
-                        <i class="fas fa-calendar me-1"></i>{{ \Carbon\Carbon::parse($trans->tanggal)->format('d/m/Y H:i') }}
+                        <i class="fas fa-calendar me-1"></i>{{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('d/m/Y H:i') }}
                     </div>
                     <form method="POST" action="/kasir/{{ $trans->id }}" class="delete-form" onsubmit="return confirm('Hapus transaksi ini? Stok barang akan dikembalikan.');">
                         @csrf

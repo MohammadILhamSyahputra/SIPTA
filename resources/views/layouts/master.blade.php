@@ -12,6 +12,11 @@
 
     <style>
         body { background-color: #f8f9fa; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         #sidebar-wrapper {
             min-height: 100vh;
             width: 250px;
