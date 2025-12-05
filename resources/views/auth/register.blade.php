@@ -192,7 +192,7 @@
                     <div class="col-lg-9">
                         <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Silahkan Daftar Akun!</h1>
                             </div>
                             
                             {{-- Flash Message (Jika ada) --}}
@@ -209,7 +209,7 @@
                                 <div class="form-group">
                                     <input type="text" name="name"
                                         class="form-control form-control-user @error('name') is-invalid @enderror"
-                                        id="exampleFirstName" placeholder="Full Name" value="{{ old('name') }}" required autofocus>
+                                        id="exampleFirstName" placeholder="Nama Lengkap" value="{{ old('name') }}" required autofocus>
                                     @error('name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -220,7 +220,7 @@
                                 <div class="form-group">
                                     <input type="email" name="email"
                                         class="form-control form-control-user @error('email') is-invalid @enderror"
-                                        id="exampleInputEmail" placeholder="Email Address" value="{{ old('email') }}" required>
+                                        id="exampleInputEmail" placeholder="Email" value="{{ old('email') }}" required>
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -242,7 +242,7 @@
                                     <div class="col-sm-6">
                                         <input type="password" name="password_confirmation"
                                             class="form-control form-control-user @error('password_confirmation') is-invalid @enderror"
-                                            id="exampleRepeatPassword" placeholder="Repeat Password" required autocomplete="new-password">
+                                            id="exampleRepeatPassword" placeholder="Ulangi Password" required autocomplete="new-password">
                                         @error('password_confirmation')
                                             <span class="invalid-feedback d-block" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -252,7 +252,7 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary btn-user btn-block">
-                                    Register Account
+                                    Daftarkan Akun
                                 </button>
                             </form>
                             <hr>

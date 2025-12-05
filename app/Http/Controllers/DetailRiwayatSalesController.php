@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DetailRiwayatSales;
 use App\Models\RiwayatSales;
 use App\Models\Barang;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class DetailRiwayatSalesController extends Controller
@@ -93,26 +94,45 @@ class DetailRiwayatSalesController extends Controller
 
     public function destroy($id)
     {
+        // 1. Temukan detail yang akan dihapus
         $detail = DetailRiwayatSales::findOrFail($id);
         $riwayatSalesId = $detail->riwayat_sales_id;
         
+        // Dapatkan kuantitas yang akan dibatalkan
         $qtyMasukDibatalkan = $detail->qty_masuk;
         $qtyReturDibatalkan = $detail->qty_retur;
 
-        $barang = Barang::findOrFail($detail->barang_id);
+        // 2. LOGIKA PEMBALIKAN STOK (Menggunakan Try-Catch untuk Barang yang Hilang)
+        try {
+            // Coba temukan barang (termasuk yang soft deleted)
+            $barang = Barang::withTrashed()->findOrFail($detail->barang_id);
 
-        $barang->stok -= $qtyMasukDibatalkan;
+            // A. Balikkan QTY MASUK (yang menambah stok)
+            $barang->stok -= $qtyMasukDibatalkan;
 
-        $barang->stok += $qtyReturDibatalkan; 
-        
-        $barang->stok = max(0, $barang->stok);
+            // B. Balikkan QTY RETUR (yang mengurangi stok)
+            $barang->stok += $qtyReturDibatalkan; 
+            
+            // 3. Simpan perubahan stok barang
+            $barang->save();
+            
+        } catch (ModelNotFoundException $e) {
+            // Jika Barang sudah dihapus permanen, kita tidak bisa membalikkan stok.
+            // Biarkan logika ini dilewati dan lanjutkan penghapusan detail.
+        } catch (\Exception $e) {
+            // Tangani error umum lainnya jika terjadi
+            return back()->with('error', 'Gagal memproses stok: ' . $e->getMessage());
+        }
 
-        $barang->save();
+        // 4. Hapus detail riwayat sales
+        // Karena kita sudah menangani pembalikan stok, kita bisa langsung menghapus detail.
+        // Penghapusan ini TIDAK melanggar Foreign Key karena tabel detail_riwayat_sales
+        // adalah tabel yang direferensikan, bukan yang mereferensi.
+        $detail->delete(); 
 
-        $detail->delete();
-
+        // 5. Redirect kembali
         return redirect()
             ->route('riwayat-sales.show', $riwayatSalesId)
-            ->with('success', 'Detail barang berhasil dihapus dan stok telah dikembalikan!');
+            ->with('success', 'Detail barang berhasil dihapus dan stok telah disesuaikan (jika barang masih ada)!');
     }
 }

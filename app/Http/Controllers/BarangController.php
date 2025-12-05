@@ -71,8 +71,8 @@ class BarangController extends Controller
 
     public function destroy($id)
     {
-        Barang::findOrFail($id)->delete();
-
+        Barang::findOrFail($id)->delete(); 
+    
         return redirect()
             ->route('barang.index')
             ->with('success', 'Barang berhasil dihapus!');

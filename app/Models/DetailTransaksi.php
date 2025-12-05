@@ -16,7 +16,7 @@ class DetailTransaksi extends Model
 
     public function barang()
     {
-        return $this->belongsTo(Barang::class, 'id_barang');
+        return $this->belongsTo(Barang::class, 'id_barang')->withTrashed();
     }
 
     public function transaksi()

@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sales;
+use App\Models\RiwayatSales;
+use App\Models\Barang;
+use App\Models\DetailRiwayatSales;
+use App\Models\DetailTransaksi;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class SalesController extends Controller
@@ -61,8 +66,10 @@ class SalesController extends Controller
 
     public function destroy($id)
     {
-        Sales::findOrFail($id)->delete();
+        Sales::findOrFail($id)->delete(); 
 
-        return redirect()->route('sales.index')->with('success', 'Sales berhasil dihapus!');
+        return redirect()
+            ->route('sales.index')
+            ->with('success', 'Sales berhasil dihapus!');
     }
 }

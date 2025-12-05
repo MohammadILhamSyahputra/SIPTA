@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kategori;
+use App\Models\Barang;
+use App\Models\DetailTransaksi;
+use App\Models\DetailRiwayatSales;
 use Illuminate\Http\Request;
 
 class KategoriController extends Controller
@@ -53,8 +56,10 @@ class KategoriController extends Controller
 
     public function destroy($id)
     {
-        Kategori::findOrFail($id)->delete();
+        Kategori::findOrFail($id)->delete(); 
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dihapus!');
+        return redirect()
+            ->route('kategori.index')
+            ->with('success', 'Kategori berhasil dihapus!');
     }
 }

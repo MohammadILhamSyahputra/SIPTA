@@ -22,6 +22,7 @@
             width: 250px;
             background-color: #343a40;
             transition: margin .25s ease-out;
+            margin-left: 0;
 
             position: fixed;
             top: 0;
@@ -33,7 +34,7 @@
         #page-content-wrapper {
             width: 100%;
             margin-left: 250px;
-            /* padding-top: 56px; */
+            transition: margin .25s ease-out;
         }
         .sidebar-menu .list-group-item {
             color: #adb5bd;
@@ -64,6 +65,49 @@
             left: 250px;
             width: calc(100% - 250px);
         }
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -250px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0; /* Konten membentang penuh */
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            margin-left: 250px;
+        }
+
+        /* PENGATURAN RESPONSIVE UTAMA */
+        @media (max-width: 992px) { /* Untuk layar Tablet dan Mobile (di bawah lg) */
+            
+            /* Sidebar disembunyikan secara default */
+            #sidebar-wrapper {
+                margin-left: -250px; 
+                /* Tambahkan z-index tinggi agar sidebar muncul di atas konten */
+                z-index: 1080; 
+            }
+            
+            /* Konten utama membentang penuh di mobile */
+            #page-content-wrapper {
+                margin-left: 0; 
+                /* Width 100% sudah benar */
+            }
+            
+            /* Saat tombol toggle diklik, sidebar muncul */
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+            #wrapper.toggled #page-content-wrapper {
+                margin-left: 0; /* Tetap 0 */
+            }
+
+            /* Navbar fixed harus membentang penuh di mobile */
+            .navbar.fixed-top {
+                left: 0;
+                width: 100%;
+        }
+    }
     </style>
     @yield('styles')
 </head>
@@ -147,6 +191,24 @@
             $('#menu-toggle').click(function(e) {
                 e.preventDefault();
                 $('#wrapper').toggleClass('toggled');
+
+            $('#menu-toggle').click(function(e) {
+            e.preventDefault();
+            $('#wrapper').toggleClass('toggled');
+            });
+
+            // Handler untuk tombol TOGGLE di mobile (icon hamburger)
+            $('#menu-toggle-mobile').click(function(e) {
+                e.preventDefault();
+                $('#wrapper').toggleClass('toggled');
+            });
+            
+            // OPSIONAL: Tambahkan logika untuk menutup sidebar jika area konten diklik di mobile
+            $('#page-content-wrapper').on('click', function() {
+                if ($(window).width() <= 992 && !$('#wrapper').hasClass('toggled')) {
+                    $('#wrapper').addClass('toggled');
+                }
+            });
             });
         });
     </script>

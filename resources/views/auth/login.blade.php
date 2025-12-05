@@ -174,7 +174,7 @@
                     <div class="col-lg-9">
                         <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Login Account!</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Silahkan Login!</h1>
                             </div>
                             
                             {{-- Flash Message (Jika ada) --}}
@@ -191,7 +191,7 @@
                                 <div class="form-group">
                                     <input type="email" name="email"
                                         class="form-control form-control-user @error('email') is-invalid @enderror"
-                                        id="exampleInputEmail" placeholder="Email Address" value="{{ old('email') }}" required autofocus>
+                                        id="exampleInputEmail" placeholder="Email" value="{{ old('email') }}" required autofocus>
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>

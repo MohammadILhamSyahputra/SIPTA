@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Barang;
 use App\Models\RiwayatSales;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sales extends Model
 {
+    use SoftDeletes;
     use HasFactory;
     protected $table = 'sales';
     protected $primaryKey = 'id';
