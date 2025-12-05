@@ -20,13 +20,23 @@ Route::get('/', function () {
 
 Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('sales', [SalesController::class, 'index'])->name('sales.index');
+});
+
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('barang', BarangController::class);
-    Route::resource('sales', SalesController::class);
+    // Route::resource('sales', SalesController::class);
     Route::resource('kategori', KategoriController::class);
+    Route::get('sales/create', [SalesController::class, 'create'])->name('sales.create');
+    Route::post('sales', [SalesController::class, 'store'])->name('sales.store');
+    Route::get('sales/{id}/edit', [SalesController::class, 'edit'])->name('sales.edit');
+    Route::put('sales/{id}', [SalesController::class, 'update'])->name('sales.update');
+    Route::delete('sales/{id}', [SalesController::class, 'destroy'])->name('sales.destroy');
 });
 
 Route::middleware(['auth', 'owner'])->group(function () {
+    // Route::get('sales', [SalesController::class, 'index'])->name('sales.index');
     Route::get('laporan-stok-barang', [BarangController::class, 'laporanStok'])
         ->name('laporan_barang.laporan_stok');
     Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');

@@ -155,6 +155,9 @@
                     <a href="/laporan-penjualan" class="list-group-item list-group-item-action {{ Request::is('laporan-penjualan*') ? 'active' : '' }}">
                         <i class="fas fa-receipt me-2"></i> Laporan Penjualan
                     </a>
+                    <a href="{{ route('sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('sales*') ? 'active' : '' }}">
+                        <i class="fas fa-users me-2"></i> Sales
+                    </a>
                     <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('riwayat-sales*') || Request::is('detail-riwayat-sales*') ? 'active' : '' }}">
                         <i class="fas fa-calendar-plus me-2"></i> Riwayat Sales
                     </a>
