@@ -502,12 +502,19 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="modal-footer button btn-confirm" id="btn-selesai" style="flex: 1;">
-                <i class="fas fa-check me-2"></i>Selesai
+            <button type="button" class="modal-footer button btn-cancel" id="btn-tanpa-cetak">
+                <i class="fas fa-times me-2"></i>Tanpa Cetak
+            </button>
+            <button type="button" class="modal-footer button btn-confirm" id="btn-cetak-nota">
+                <i class="fas fa-print me-2"></i>Cetak Nota
             </button>
         </div>
     </div>
 </div>
+
+<!-- Hidden iframe untuk print -->
+<iframe id="print-frame" style="display:none;"></iframe>
+
 @endsection
 
 @section('scripts')
@@ -898,8 +905,270 @@
         });
     });
 
-    // Selesai transaksi
-    document.getElementById('btn-selesai').addEventListener('click', function() {
+    // Selesai transaksi tanpa cetak
+    document.getElementById('btn-tanpa-cetak').addEventListener('click', function() {
+        selesaiTransaksi();
+    });
+
+    // Cetak nota
+    document.getElementById('btn-cetak-nota').addEventListener('click', function() {
+        cetakNota();
+        // Selesai transaksi setelah cetak
+        setTimeout(() => {
+            selesaiTransaksi();
+        }, 500);
+    });
+
+    // Function untuk cetak nota
+    function cetakNota() {
+        const totalHarga = document.getElementById('konfirmasi-total-harga').textContent;
+        const uangMasuk = document.getElementById('konfirmasi-uang-masuk').textContent;
+        const kembalian = document.getElementById('konfirmasi-kembalian').textContent;
+
+        // Ambil items dari form
+        const items = [];
+        document.querySelectorAll('.item-row.filled').forEach(row => {
+            const nama = row.querySelector('.input-barang').value;
+            const qty = row.querySelector('.input-qty').value;
+            const harga = row.querySelector('.harga-satuan').value;
+            const subtotal = row.querySelector('.subtotal').value;
+
+            items.push({
+                nama: nama,
+                qty: qty,
+                harga: harga,
+                subtotal: subtotal
+            });
+        });
+
+        // Generate HTML nota
+        const notaHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>nota</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            width: 80mm;
+            margin: 0 auto;
+            padding: 10mm;
+            background: white;
+        }
+        
+        .nota-container {
+            text-align: center;
+            border: 1px dashed #000;
+            padding: 15px;
+        }
+        
+        .header {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 10px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .greeting {
+            font-size: 10px;
+            font-weight: bold;
+            margin: 15px 0;
+            line-height: 1.5;
+            text-align: center;
+        }
+        
+        .items {
+            text-align: left;
+            margin: 15px 0;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 10px 0;
+            font-size: 12px;
+        }
+        
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            align-items: flex-start;
+        }
+        
+        .item-name {
+            flex: 1;
+            font-weight: bold;
+        }
+        
+        .item-qty {
+            width: 50px;
+            text-align: center;
+        }
+        
+        .item-price {
+            width: 70px;
+            text-align: right;
+        }
+        
+        .summary {
+            margin: 15px 0;
+            font-size: 12px;
+            text-align: right;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 5px;
+            gap: 20px;
+        }
+        
+        .summary-row.total {
+            border-top: 1px solid #000;
+            padding-top: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .summary-row.kembalian {
+            border-top: 1px dashed #000;
+            padding-top: 8px;
+            font-weight: bold;
+            color: #00AA00;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+            line-height: 1.6;
+            border-top: 1px solid #000;
+            padding-top: 10px;
+        }
+        
+        .thank-you {
+            font-size: 13px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .datetime {
+            font-size: 11px;
+            margin-top: 10px;
+            color: #666;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .nota-container {
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nota-container">
+        <div class="header">
+            <div class="logo">SIPTA</div>
+            <div class="subtitle">Jl.KH Wachid Hasyim No.94, Bandar Lor, Kecamatan Mojoroto, Kota Kediri</div>
+        </div>
+        
+        <div class="greeting">
+            ✓ TERIMA KASIH<br>
+            atas pembelian Anda!<br>
+            <br>
+            Harap belanja lagi di sini<br>
+            dan nikmati penawaran menarik<br>
+            lainnya dari kami.
+        </div>
+        
+        <div class="items">
+            ${items.map((item, index) => `
+            <div class="item-row">
+                <div class="item-name">${item.nama}</div>
+            </div>
+            <div class="item-row">
+                <div style="flex: 1; padding-left: 10px; font-size: 11px; color: #666;">
+                    ${item.qty} x ${item.harga} = ${item.subtotal}
+                </div>
+            </div>
+            `).join('')}
+        </div>
+        
+        <div class="summary">
+            <div class="summary-row">
+                <span>Total Harga :</span>
+                <span>${totalHarga}</span>
+            </div>
+            <div class="summary-row">
+                <span>Uang Masuk :</span>
+                <span>${uangMasuk}</span>
+            </div>
+            <div class="summary-row kembalian">
+                <span>Kembalian :</span>
+                <span>${kembalian}</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="thank-you">TERIMA KASIH! 🙏</div>
+            <div style="margin: 10px 0; line-height: 1.5; font-size: 10px;">
+                Hubungi kami untuk pertanyaan<br>
+                atau keluhan produk
+            </div>
+            <div class="datetime">
+                ${new Date().toLocaleString('id-ID', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                })}
+            </div>
+            <div style="margin-top: 10px; font-size: 10px; letter-spacing: 1px;">
+                ════════════════════════
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+        `;
+
+        // Buka di iframe
+        const printFrame = document.getElementById('print-frame');
+        printFrame.contentDocument.open();
+        printFrame.contentDocument.write(notaHTML);
+        printFrame.contentDocument.close();
+
+        // Print setelah iframe siap
+        setTimeout(() => {
+            printFrame.contentWindow.print();
+        }, 250);
+    }
+
+    // Function untuk selesai transaksi
+    function selesaiTransaksi() {
         document.getElementById('modal-konfirmasi').classList.remove('show');
         
         // Reset form
@@ -949,7 +1218,7 @@
         `;
         rowCount = 1;
         updateSummary();
-    });
+    }
 
     // Go to history
     document.getElementById('btn-riwayat').addEventListener('click', function() {
