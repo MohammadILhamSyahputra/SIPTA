@@ -162,7 +162,7 @@
                         <i class="fas fa-calendar-plus me-2"></i> Riwayat Sales
                     </a>
                     <a href="{{ route('user.index') }}" class="list-group-item list-group-item-action {{ Request::is('user*') ? 'active' : '' }}">
-                        <i class="fas fa-users me-2"></i> Kelola User
+                        <i class="fas fa-user me-2"></i> Kelola User
                     </a>
                 @endif
 

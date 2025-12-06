@@ -33,7 +33,7 @@
                                         name="kode_barang" 
                                         value="{{ old('kode_barang', $barang->kode_barang) }}"
                                         placeholder="cth: SKM001"
-                                        required>
+                                        readonly>
                                     @error('kode_barang')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
