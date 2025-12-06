@@ -1,5 +1,7 @@
 @extends('layouts.master')
 
+@section('title', 'Edit Data User') 
+
 @section('content')
 <h1 class="h3 mb-4 text-gray-800">Edit Peran Pengguna</h1>
 
