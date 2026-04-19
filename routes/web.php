@@ -35,7 +35,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'owner'])->group(function () {
-    // Route::get('sales', [SalesController::class, 'index'])->name('sales.index');
+    Route::get('sales', [SalesController::class, 'index'])->name('sales.index');
     Route::get('laporan-stok-barang', [BarangController::class, 'laporanStok'])
         ->name('laporan_barang.laporan_stok');
     Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
@@ -53,9 +53,6 @@ Route::middleware(['auth', 'owner'])->group(function () {
         [DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
     Route::delete('detail-riwayat-sales/{id}', 
         [DetailRiwayatSalesController::class, 'destroy'])->name('detail-riwayat-sales.destroy');
-
-    Route::resource('user', UserController::class)->except(['create', 'store', 'show']);
-
 });
 
 // Route::resource('laporan-sales', SalesController::class);

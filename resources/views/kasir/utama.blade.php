@@ -999,7 +999,7 @@
         .items {
             text-align: left;
             margin: 15px 0;
-            border-top: 1px solid #000;
+            /*border-top: 1px solid #000;*/
             border-bottom: 1px solid #000;
             padding: 10px 0;
             font-size: 12px;
@@ -1093,14 +1093,14 @@
             <div class="subtitle">Jl.KH Wachid Hasyim No.94, Bandar Lor, Kecamatan Mojoroto, Kota Kediri</div>
         </div>
         
-        <div class="greeting">
+        <!-- <div class="greeting">
             ✓ TERIMA KASIH<br>
             atas pembelian Anda!<br>
             <br>
             Harap belanja lagi di sini<br>
             dan nikmati penawaran menarik<br>
             lainnya dari kami.
-        </div>
+        </div>-->
         
         <div class="items">
             ${items.map((item, index) => `
@@ -1131,10 +1131,17 @@
         </div>
         
         <div class="footer">
-            <div class="thank-you">TERIMA KASIH! 🙏</div>
-            <div style="margin: 10px 0; line-height: 1.5; font-size: 10px;">
+            <div class="thank-you">TERIMA KASIH! 🙏<br></div>
+            <!-- <div style="margin: 10px 0; line-height: 1.5; font-size: 10px;">
                 Hubungi kami untuk pertanyaan<br>
                 atau keluhan produk
+            </div>-->
+            <div class="greeting">
+                <!--atas pembelian Anda!<br>-->
+                <br>
+                Harap belanja lagi di sini<br>
+                dan nikmati penawaran menarik<br>
+                lainnya dari kami.
             </div>
             <div class="datetime">
                 ${new Date().toLocaleString('id-ID', { 
