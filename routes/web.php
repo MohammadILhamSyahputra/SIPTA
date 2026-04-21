@@ -53,6 +53,7 @@ Route::middleware(['auth', 'owner'])->group(function () {
         [DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
     Route::delete('detail-riwayat-sales/{id}', 
         [DetailRiwayatSalesController::class, 'destroy'])->name('detail-riwayat-sales.destroy');
+    Route::resource('user', UserController::class)->except(['create', 'store', 'show']);
 });
 
 // Route::resource('laporan-sales', SalesController::class);
