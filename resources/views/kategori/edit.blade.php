@@ -13,7 +13,7 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Form Edit Kategori: **{{ $kategori->nama_kategori }}**</h6>
+                    <h6 class="m-0 font-weight-bold text-success">Form Edit Kategori: {{ $kategori->nama_kategori }}</h6>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('kategori.update', $kategori->id) }}" method="POST">

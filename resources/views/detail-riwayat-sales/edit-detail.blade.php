@@ -11,7 +11,7 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-primary text-white">
+        <div class="card-header py-3 bg-success text-white">
             <h6 class="m-0 font-weight-bold">Riwayat Kunjungan</h6>
         </div>
         <div class="card-body">
@@ -22,10 +22,10 @@
                 </div>
                 <div class="col-md-6">
                     <p><strong>Tanggal Kunjungan:</strong> 
-                        {{ \Carbon\Carbon::parse($detail->riwayat->tanggal_kunjungan)->translatedFormat('l, d F Y H:i') }}
+                        {{ \Carbon\Carbon::parse($detail->riwayat->tanggal_kunjungan)->locale('id')->translatedFormat('l, d F Y H:i') }}
                     </p>
                     <p><strong>Dibuat Pada:</strong> 
-                        {{ \Carbon\Carbon::parse($detail->riwayat->created_at)->translatedFormat('d M Y') }}
+                        {{ \Carbon\Carbon::parse($detail->riwayat->created_at)->locale('id')->translatedFormat('d M Y') }}
                     </p>
                 </div>
             </div>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-warning text-white">
+        <div class="card-header py-3 bg-success text-white">
             <h6 class="m-0 font-weight-bold">Edit Item Transaksi (ID Detail: {{ $detail->id }})</h6>
         </div>
         

@@ -12,7 +12,7 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-primary text-white">
+        <div class="card-header py-3 bg-success text-white">
             <h6 class="m-0 font-weight-bold">Informasi Kunjungan</h6>
         </div>
         
@@ -27,7 +27,7 @@
                         {{ \Carbon\Carbon::parse($riwayat->tanggal_kunjungan)->locale('id')->translatedFormat('l, d F Y H:i') }}
                     </p>
                     <p><strong>Dibuat Pada:</strong> 
-                        {{ \Carbon\Carbon::parse($riwayat->created_at)->translatedFormat('d M Y') }}
+                        {{ \Carbon\Carbon::parse($riwayat->created_at)->locale('id')->translatedFormat('d M Y') }}
                     </p>
                 </div>
             </div>
@@ -35,7 +35,7 @@
     </div>
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Daftar Barang Transaksi</h6>
+            <h6 class="m-0 font-weight-bold text-success">Daftar Barang Transaksi</h6>
             <a href="{{ route('detail-riwayat-sales.create', ['riwayat_sales_id' => $riwayat->id]) }}" 
             class="btn btn-success shadow-sm">
                 <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Barang Baru
@@ -69,6 +69,13 @@
                                         <a href="{{ route('detail-riwayat-sales.edit', $detail->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        <form action="{{ route('detail-riwayat-sales.destroy', $detail->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus detail barang ini? Stok barang akan disesuaikan kembali!')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus Data">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

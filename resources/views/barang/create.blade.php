@@ -13,7 +13,7 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Input Detail Produk Baru</h6>
+                    <h6 class="m-0 font-weight-bold text-success">Input Detail Produk Baru</h6>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('barang.store') }}" method="POST">
@@ -142,7 +142,7 @@
                                 <i class="fas fa-arrow-left"></i> Kembali
                             </a>
                             
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-success">
                                 <i class="fas fa-save"></i> Simpan Barang
                             </button>
                         </div>

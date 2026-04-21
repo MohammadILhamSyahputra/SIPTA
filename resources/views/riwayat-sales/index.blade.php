@@ -48,7 +48,7 @@
                                     
                                     <td>
                                         @if ($item->tanggal_kunjungan)
-                                            {{ \Carbon\Carbon::parse($item->tanggal_kunjungan)->translatedFormat('d F Y, H:i') }}
+                                            {{ \Carbon\Carbon::parse($item->tanggal_kunjungan)->locale('id')->translatedFormat('d F Y, H:i') }}
                                         @else
                                             <span class="text-danger">-- Belum Dicatat --</span>
                                         @endif

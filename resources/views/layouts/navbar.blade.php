@@ -1,12 +1,16 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm fixed-top">
     <div class="container-fluid">
+
+        <a class="nav-link text-dark me-3 d-lg-none" href="#" id="menu-toggle-mobile" title="Tampilkan Sidebar">
+            <i class="fas fa-bars fa-lg"></i>
+        </a>
         
-        <a class="nav-link text-dark me-3" href="#" id="menu-toggle" title="Klik untuk menyembunyikan/menampilkan Sidebar">
+        {{-- <a class="nav-link text-dark me-3" href="#" id="menu-toggle" title="Klik untuk menyembunyikan/menampilkan Sidebar"> --}}
             @php
                 $userRole = Auth::user()->userType ?? 'Admin';
             @endphp
             <span class="fw-bold">{{ strtoupper($userRole) }}</span>
-        </a>
+        
         
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">

@@ -81,36 +81,40 @@ class LaporanPenjualanController extends Controller
         $startDateTime = Carbon::parse($startDate)->startOfDay();
         $endDateTime = Carbon::parse($endDate)->endOfDay();
 
-        $penjualanDetails = DB::table('detail_transaksi as dt')
+        $penjualanAggregates = DB::table('detail_transaksi as dt')
             ->select(
                 'b.kode_barang',
                 'b.nama as nama_barang',
-                'b.harga_beli',
                 'k.nama_kategori as kategori',
-                'dt.qty', 
-                'dt.harga_satuan',
-                DB::raw('(dt.qty * dt.harga_satuan) as total_penjualan'),
-                DB::raw('((dt.harga_satuan - b.harga_beli) * dt.qty) as untung')
+                
+                'b.harga_beli', 
+                
+                DB::raw('MAX(dt.harga_satuan) as harga_satuan'), 
+                
+                DB::raw('SUM(dt.qty) as total_qty'), 
+                DB::raw('SUM(dt.qty * dt.harga_satuan) as total_omset'),
+                DB::raw('SUM((dt.harga_satuan - b.harga_beli) * dt.qty) as total_untung')
             )
             ->join('transaksi as t', 'dt.id_transaksi', '=', 't.id')
             ->join('barang as b', 'dt.id_barang', '=', 'b.id')
             ->join('kategori as k', 'b.id_kategori', '=', 'k.id')
             ->whereBetween('t.tanggal', [$startDateTime, $endDateTime])
+            
+            ->groupBy('b.kode_barang', 'b.nama', 'b.harga_beli', 'k.nama_kategori')
             ->get();
             
-        $tableData = $penjualanDetails->map(function ($detail) {
-            $totalPenjualan = $detail->total_penjualan;
-            $totalUntung = $detail->untung;
-
-            $marginPersentase = ($totalPenjualan > 0) ? ($totalUntung / $totalPenjualan) * 100 : 0;
+        $tableData = $penjualanAggregates->map(function ($detail) {
+            $totalOmset = $detail->total_omset;
+            $totalUntung = $detail->total_untung;
+            $marginPersentase = ($totalOmset > 0) ? ($totalUntung / $totalOmset) * 100 : 0;
 
             return [
                 'kode_barang' => $detail->kode_barang,
                 'nama_barang' => $detail->nama_barang,
                 'kategori' => $detail->kategori,
-                'jumlah' => $detail->qty,
-                'harga_satuan' => $detail->harga_satuan,
-                'total_penjualan' => $totalPenjualan,
+                'jumlah' => $detail->total_qty, 
+                'harga_satuan' => $detail->harga_satuan, 
+                'total_penjualan' => $totalOmset, 
                 'untung' => $totalUntung,
                 'margin_persentase' => $marginPersentase,
             ];

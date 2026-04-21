@@ -12,20 +12,30 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanPenjualanController;
 use App\Http\Controllers\LaporanSalesController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth'])->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('sales', [SalesController::class, 'index'])->name('sales.index');
+});
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('barang', BarangController::class);
-    Route::resource('sales', SalesController::class);
+    // Route::resource('sales', SalesController::class);
     Route::resource('kategori', KategoriController::class);
+    Route::get('sales/create', [SalesController::class, 'create'])->name('sales.create');
+    Route::post('sales', [SalesController::class, 'store'])->name('sales.store');
+    Route::get('sales/{id}/edit', [SalesController::class, 'edit'])->name('sales.edit');
+    Route::put('sales/{id}', [SalesController::class, 'update'])->name('sales.update');
+    Route::delete('sales/{id}', [SalesController::class, 'destroy'])->name('sales.destroy');
 });
 
 Route::middleware(['auth', 'owner'])->group(function () {
+    Route::get('sales', [SalesController::class, 'index'])->name('sales.index');
     Route::get('laporan-stok-barang', [BarangController::class, 'laporanStok'])
         ->name('laporan_barang.laporan_stok');
     Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
@@ -41,10 +51,11 @@ Route::middleware(['auth', 'owner'])->group(function () {
         [DetailRiwayatSalesController::class, 'edit'])->name('detail-riwayat-sales.edit');
     Route::put('detail-riwayat-sales/{id}',
         [DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
-
+    Route::delete('detail-riwayat-sales/{id}', 
+        [DetailRiwayatSalesController::class, 'destroy'])->name('detail-riwayat-sales.destroy');
 });
 
-Route::resource('laporan-sales', SalesController::class);
+// Route::resource('laporan-sales', SalesController::class);
 
 Route::middleware(['auth', 'kasir'])->group(function () {
     Route::resource('kategori', KategoriController::class);
@@ -72,27 +83,27 @@ Route::middleware(['auth', 'kasir'])->group(function () {
 //     [DetailRiwayatSalesController::class, 'update'])->name('detail-riwayat-sales.update');
 
 
-Route::prefix('transaksi')->name('transaksi.')->group(function () {
-    Route::get('/', [TransaksiController::class, 'index'])->name('index');
-    Route::get('/create', [TransaksiController::class, 'create'])->name('create');
-    Route::post('/store', [TransaksiController::class, 'store'])->name('store');
-    Route::delete('/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
-});
+// Route::prefix('transaksi')->name('transaksi.')->group(function () {
+//     Route::get('/', [TransaksiController::class, 'index'])->name('index');
+//     Route::get('/create', [TransaksiController::class, 'create'])->name('create');
+//     Route::post('/store', [TransaksiController::class, 'store'])->name('store');
+//     Route::delete('/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
+// });
 
-Route::prefix('detail-transaksi')->name('detail-transaksi.')->group(function () {
-    Route::get('/', [DetailTransaksiController::class, 'index'])->name('index');
-    Route::get('/create', [DetailTransaksiController::class, 'create'])->name('create');
-    Route::post('/store', [DetailTransaksiController::class, 'store'])->name('store');
-    Route::delete('/{id}', [DetailTransaksiController::class, 'destroy'])->name('destroy');
-});
+// Route::prefix('detail-transaksi')->name('detail-transaksi.')->group(function () {
+//     Route::get('/', [DetailTransaksiController::class, 'index'])->name('index');
+//     Route::get('/create', [DetailTransaksiController::class, 'create'])->name('create');
+//     Route::post('/store', [DetailTransaksiController::class, 'store'])->name('store');
+//     Route::delete('/{id}', [DetailTransaksiController::class, 'destroy'])->name('destroy');
+// });
 
-// Detail Riwayat Sales
-Route::prefix('detail-riwayat-sales')->name('detail-riwayat-sales.')->group(function () {
-    Route::get('/', [DetailRiwayatSalesController::class, 'index'])->name('index');
-    Route::get('/create', [DetailRiwayatSalesController::class, 'create'])->name('create');
-    Route::post('/store', [DetailRiwayatSalesController::class, 'store'])->name('store');
-    Route::delete('/{id}', [DetailRiwayatSalesController::class, 'destroy'])->name('destroy');
-});
+// // Detail Riwayat Sales
+// Route::prefix('detail-riwayat-sales')->name('detail-riwayat-sales.')->group(function () {
+//     Route::get('/', [DetailRiwayatSalesController::class, 'index'])->name('index');
+//     Route::get('/create', [DetailRiwayatSalesController::class, 'create'])->name('create');
+//     Route::post('/store', [DetailRiwayatSalesController::class, 'store'])->name('store');
+//     Route::delete('/{id}', [DetailRiwayatSalesController::class, 'destroy'])->name('destroy');
+// });
 
 // Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan.index');
 // Route::post('/laporan-penjualan', [LaporanPenjualanController::class, 'filter'])->name('laporan.penjualan.filter');

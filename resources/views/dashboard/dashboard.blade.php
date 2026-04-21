@@ -155,7 +155,7 @@
             data: {
                 labels: kategoriLabels,
                 datasets: [{
-                    label: 'Jumlah Barang',
+                    label: 'Jumlah Item',
                     data: kategoriData,
                     backgroundColor: [
                         'rgba(142, 246, 255, 1)',

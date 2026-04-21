@@ -13,7 +13,7 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-warning text-dark">
+                    <h6 class="m-0 font-weight-bold text-success">
                         Edit Barang: {{ $barang->nama }} (Kode: {{ $barang->kode_barang }})
                     </h6>
                 </div>
@@ -33,7 +33,7 @@
                                         name="kode_barang" 
                                         value="{{ old('kode_barang', $barang->kode_barang) }}"
                                         placeholder="cth: SKM001"
-                                        required>
+                                        readonly>
                                     @error('kode_barang')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

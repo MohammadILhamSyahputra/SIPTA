@@ -26,7 +26,7 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode_barang' => 'nullable|string|max:50',
+            'kode_barang' => 'nullable|string|max:50|unique:barang,kode_barang',
             'nama' => 'required|string|max:255', 
             'stok' => 'required|integer',
             'harga_beli' => 'required|integer',
@@ -71,8 +71,8 @@ class BarangController extends Controller
 
     public function destroy($id)
     {
-        Barang::findOrFail($id)->delete();
-
+        Barang::findOrFail($id)->delete(); 
+    
         return redirect()
             ->route('barang.index')
             ->with('success', 'Barang berhasil dihapus!');

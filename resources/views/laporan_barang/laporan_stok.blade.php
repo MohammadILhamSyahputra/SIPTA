@@ -1,5 +1,7 @@
 @extends('layouts.master') 
 
+@section('title', 'Laporan Barang Terlaris')
+
 @section('content')
 <div class="container-fluid py-4">
     <div class="row">
@@ -30,11 +32,22 @@
                 </form>
                 {{-- AKHIR FORM FILTER TANGGAL --}}
 
-                <div class="card-header bg-warning text-dark font-weight-bold p-3 rounded-top mb-3">
+                <div class="card-header bg-success text-light font-weight-bold p-3 rounded-top mb-3">
                     <i class="fas fa-chart-bar mr-2"></i> Hasil Laporan
                     @if(isset($tglMulai) && isset($tglAkhir))
                         <span class="float-right badge badge-primary p-2">
-                            Periode: {{ date('d M Y', strtotime($tglMulai)) }} s/d {{ date('d M Y', strtotime($tglAkhir)) }}
+                            Periode: 
+                            {{ 
+                                \Carbon\Carbon::parse($tglMulai)
+                                    ->locale('id')
+                                    ->translatedFormat('d F Y') 
+                            }} 
+                            s/d 
+                            {{ 
+                                \Carbon\Carbon::parse($tglAkhir)
+                                    ->locale('id')
+                                    ->translatedFormat('d F Y') 
+                            }}
                         </span>
                     @endif
                 </div>

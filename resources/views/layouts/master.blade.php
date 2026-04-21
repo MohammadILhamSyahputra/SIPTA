@@ -12,11 +12,17 @@
 
     <style>
         body { background-color: #f8f9fa; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         #sidebar-wrapper {
             min-height: 100vh;
             width: 250px;
             background-color: #343a40;
             transition: margin .25s ease-out;
+            margin-left: 0;
 
             position: fixed;
             top: 0;
@@ -28,7 +34,7 @@
         #page-content-wrapper {
             width: 100%;
             margin-left: 250px;
-            /* padding-top: 56px; */
+            transition: margin .25s ease-out;
         }
         .sidebar-menu .list-group-item {
             color: #adb5bd;
@@ -59,6 +65,49 @@
             left: 250px;
             width: calc(100% - 250px);
         }
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -250px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 0; /* Konten membentang penuh */
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            margin-left: 250px;
+        }
+
+        /* PENGATURAN RESPONSIVE UTAMA */
+        @media (max-width: 992px) { /* Untuk layar Tablet dan Mobile (di bawah lg) */
+            
+            /* Sidebar disembunyikan secara default */
+            #sidebar-wrapper {
+                margin-left: -250px; 
+                /* Tambahkan z-index tinggi agar sidebar muncul di atas konten */
+                z-index: 1080; 
+            }
+            
+            /* Konten utama membentang penuh di mobile */
+            #page-content-wrapper {
+                margin-left: 0; 
+                /* Width 100% sudah benar */
+            }
+            
+            /* Saat tombol toggle diklik, sidebar muncul */
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+            #wrapper.toggled #page-content-wrapper {
+                margin-left: 0; /* Tetap 0 */
+            }
+
+            /* Navbar fixed harus membentang penuh di mobile */
+            .navbar.fixed-top {
+                left: 0;
+                width: 100%;
+        }
+    }
     </style>
     @yield('styles')
 </head>
@@ -88,16 +137,16 @@
                     </a>
                 @endif
 
-                {{-- <div class="text-secondary small mt-3 px-3">TRANSAKSI & RIWAYAT</div>
+                <!-- {{-- <div class="text-secondary small mt-3 px-3">TRANSAKSI & RIWAYAT</div>
                 <a href="{{ route('transaksi.create') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-cash-register me-2"></i> Point of Sale (POS)
                 </a>
                 <a href="{{ route('transaksi.index') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-receipt me-2"></i> Riwayat Transaksi
-                </a>
-                <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action">
+                </a> -->
+                <!-- <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action">
                     <i class="fas fa-chart-line me-2"></i> Riwayat Sales
-                </a> --}}
+                </a> --}} -->
 
                 @if (Auth::check() && Auth::user()->userType === 'owner')
                     <a href="{{ route('laporan_barang.laporan_stok') }}" class="list-group-item list-group-item-action {{ Request::is('laporan-stok-barang*') ? 'active' : '' }}">
@@ -106,9 +155,15 @@
                     <a href="/laporan-penjualan" class="list-group-item list-group-item-action {{ Request::is('laporan-penjualan*') ? 'active' : '' }}">
                         <i class="fas fa-receipt me-2"></i> Laporan Penjualan
                     </a>
+                    <a href="{{ route('sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('sales*') ? 'active' : '' }}">
+                        <i class="fas fa-users me-2"></i> Sales
+                    </a>
                     <a href="{{ route('riwayat-sales.index') }}" class="list-group-item list-group-item-action {{ Request::is('riwayat-sales*') || Request::is('detail-riwayat-sales*') ? 'active' : '' }}">
                         <i class="fas fa-calendar-plus me-2"></i> Riwayat Sales
                     </a>
+                    {{-- <a href="{{ route('user.index') }}" class="list-group-item list-group-item-action {{ Request::is('user*') ? 'active' : '' }}">
+                        <i class="fas fa-user me-2"></i> Kelola User
+                    </a> --}}
                 @endif
 
                 @if (Auth::check() && Auth::user()->userType === 'kasir')
@@ -139,6 +194,24 @@
             $('#menu-toggle').click(function(e) {
                 e.preventDefault();
                 $('#wrapper').toggleClass('toggled');
+
+            $('#menu-toggle').click(function(e) {
+            e.preventDefault();
+            $('#wrapper').toggleClass('toggled');
+            });
+
+            // Handler untuk tombol TOGGLE di mobile (icon hamburger)
+            $('#menu-toggle-mobile').click(function(e) {
+                e.preventDefault();
+                $('#wrapper').toggleClass('toggled');
+            });
+            
+            // OPSIONAL: Tambahkan logika untuk menutup sidebar jika area konten diklik di mobile
+            $('#page-content-wrapper').on('click', function() {
+                if ($(window).width() <= 992 && !$('#wrapper').hasClass('toggled')) {
+                    $('#wrapper').addClass('toggled');
+                }
+            });
             });
         });
     </script>

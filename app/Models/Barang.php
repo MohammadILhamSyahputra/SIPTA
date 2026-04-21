@@ -8,9 +8,11 @@ use App\Models\Kategori;
 use App\Models\Sales;
 use App\Models\DetailTransaksi;
 use App\Models\DetailRiwayatSales;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Barang extends Model
 {
+    use SoftDeletes;
     use HasFactory;
     protected $table = 'barang';
     protected $primaryKey = 'id';

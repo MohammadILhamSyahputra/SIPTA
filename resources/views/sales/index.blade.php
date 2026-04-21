@@ -6,9 +6,11 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Daftar Sales</h1>
+        @if (Auth::check() && Auth::user()->userType === 'admin')
         <a href="{{ route('sales.create') }}" class="btn btn-success shadow-sm">
             <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Sales Baru
         </a>
+        @endif
     </div>
 
     <div class="card shadow mb-4">
@@ -25,7 +27,9 @@
                             <th>Nama Sales</th>
                             <th>No telp</th>
                             <th>Alamat</th>
+                            @if (Auth::check() && Auth::user()->userType === 'admin')
                             <th>Aksi</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -36,6 +40,7 @@
                                     <td>{{ $sales->nama_sales }}</td>
                                     <td>{{ $sales->no_telp }}</td>
                                     <td>{{ $sales->alamat }}</td>
+                                    @if (Auth::check() && Auth::user()->userType === 'admin')
                                     <td>
                                         <a href="{{ route('sales.edit', $sales->id) }}" class="btn btn-sm btn-warning me-1" title="Edit">
                                             <i class="fas fa-edit"></i>
@@ -48,6 +53,7 @@
                                             </button>
                                         </form>
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                     </tbody>

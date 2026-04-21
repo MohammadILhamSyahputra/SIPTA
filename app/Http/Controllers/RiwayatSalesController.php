@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\RiwayatSales;
 use App\Models\Sales;
+use App\Models\DetailRiwayatSales;
+use App\Models\Barang;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 
 class RiwayatSalesController extends Controller
@@ -79,11 +82,41 @@ class RiwayatSalesController extends Controller
 
     public function destroy($id)
     {
-        RiwayatSales::findOrFail($id)->delete();
+        $riwayat = RiwayatSales::with('detail')->findOrFail($id);
+
+        // Loop melalui detail. Gunakan try-catch untuk menangani Barang yang sudah dihapus permanen.
+        foreach ($riwayat->detail as $detail) {
+            try {
+                // Coba temukan barang (termasuk yang soft deleted)
+                // Jika barang sudah di-hard delete (permanen), ini akan melempar exception
+                $barang = Barang::withTrashed()->findOrFail($detail->barang_id);
+
+                // --- LOGIKA PEMBALIKAN STOK ---
+                // Membalikkan QTY MASUK (yang menambah stok)
+                $barang->stok -= $detail->qty_masuk;
+
+                // Membalikkan QTY RETUR (yang mengurangi stok)
+                $barang->stok += $detail->qty_retur; 
+                
+                // Simpan perubahan stok
+                $barang->save();
+                
+            } catch (ModelNotFoundException $e) {
+                // Jika Barang sudah dihapus PERMANEN (hard delete), 
+                // kita tidak bisa membalikkan stoknya. Kita hanya mencatat dan melanjutkan.
+                // Anda bisa tambahkan logging di sini jika diperlukan.
+            }
+            
+            // HAPUS DETAIL: Detail harus selalu dihapus terlepas dari status Barang
+            $detail->delete(); 
+        }
+
+        // Hapus RiwayatSales (PARENT)
+        $riwayat->delete();
 
         return redirect()
             ->route('riwayat-sales.index')
-            ->with('success', 'Riwayat berhasil dihapus!');
+            ->with('success', 'Riwayat sales berhasil dihapus. Stok disesuaikan (jika barang masih ada).');
     }
 
     public function show($id)
