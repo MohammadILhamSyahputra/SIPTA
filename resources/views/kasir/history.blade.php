@@ -5,165 +5,99 @@
 @section('styles')
 <style>
     .history-container {
-        max-width: 1400px;
+        max-width: 1000px;
         margin: 0 auto;
     }
 
-    .transaction-card {
+    /* List Style Baru (Gambar Kiri) */
+    .transaction-list {
         background: white;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        padding: 20px;
-        margin-bottom: 20px;
-        border-left: 5px solid #28a745;
+        overflow: hidden;
     }
 
-    .transaction-header {
+    .transaction-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #e9ecef;
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        border-left: 4px solid #28a745;
+        transition: background 0.2s;
     }
 
-    .transaction-id {
+    .transaction-item:hover {
+        background: #f8f9fa;
+    }
+
+    .trans-info-left {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .trans-id {
         font-weight: bold;
         color: #333;
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
-    .transaction-time {
-        color: #666;
-        font-size: 0.9rem;
+    .trans-time {
+        color: #888;
+        font-size: 0.85rem;
     }
 
-    .transaction-items {
-        margin-bottom: 15px;
+    .trans-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
     }
 
-    .item-detail {
+    .trans-total {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .btn-detail {
+        background: #e3f2fd;
+        color: #2196f3;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-detail:hover {
+        background: #2196f3;
+        color: white;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+    }
+    .modal-header {
+        border-bottom: 1px solid #f0f0f0;
+        padding: 20px;
+    }
+    .modal-body {
+        padding: 20px;
+    }
+    .detail-row {
         display: flex;
         justify-content: space-between;
-        padding: 8px 0;
-        color: #555;
+        margin-bottom: 10px;
         font-size: 0.95rem;
     }
-
-    .item-detail:not(:last-child) {
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .item-name {
-        flex: 1;
-    }
-
-    .item-qty {
-        width: 60px;
-        text-align: center;
-    }
-
-    .item-price {
-        width: 100px;
-        text-align: right;
-    }
-
-    .transaction-summary {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 6px;
-        margin-bottom: 15px;
-    }
-
-    .summary-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 8px;
-    }
-
-    .summary-row:last-child {
-        margin-bottom: 0;
-        font-weight: bold;
-        color: #28a745;
-        font-size: 1.1rem;
-        padding-top: 8px;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .transaction-footer {
-        display: flex;
-        gap: 10px;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .btn-delete-transaction {
-        background: #dc3545;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background 0.2s;
-        font-weight: 600;
-    }
-
-    .btn-delete-transaction:hover {
-        background: #c82333;
-    }
-
-    .btn-kembali {
-        background: #6c757d;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background 0.2s;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .btn-kembali:hover {
-        background: #545b62;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 40px 20px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .empty-state-icon {
-        font-size: 3rem;
-        color: #ccc;
-        margin-bottom: 15px;
-    }
-
-    .empty-state-text {
-        color: #666;
-        font-size: 1.1rem;
-    }
-
-    .success-alert {
-        background: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-        padding: 12px;
-        border-radius: 6px;
-        margin-bottom: 20px;
-    }
-
-    .cambium-display {
-        background: #fff3cd;
-        border: 1px solid #ffc107;
-        color: #856404;
-        padding: 10px;
-        border-radius: 4px;
-        font-weight: 600;
+    .divider {
+        border-top: 1px dashed #ddd;
+        margin: 15px 0;
     }
 
     .header-section {
@@ -173,38 +107,22 @@
         margin-bottom: 25px;
     }
 
-    .header-section h1 {
-        margin: 0;
+    .btn-kembali {
+        background: #6c757d;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.9rem;
     }
 
-    .delete-form {
-        display: inline;
-    }
-
-    @media (max-width: 768px) {
-        .transaction-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .transaction-footer {
-            flex-direction: column;
-        }
-
-        .btn-delete-transaction,
-        .btn-kembali {
-            width: 100%;
-        }
-
-        .item-detail {
-            flex-direction: column;
-        }
-
-        .item-qty,
-        .item-price {
-            width: auto;
-            text-align: left;
-        }
+    .btn-delete-trans {
+        color: #dc3545;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 10px;
     }
 </style>
 @endsection
@@ -219,101 +137,124 @@
     </div>
 
     @if (session('success'))
-        <div class="success-alert">
+        <div class="alert alert-success alert-dismissible fade show">
             <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if ($transaksi->count() > 0)
-        <div style="margin-bottom: 20px; padding: 15px; background: #e3f2fd; border-radius: 6px; border-left: 4px solid #2196f3;">
+        <div class="alert alert-primary mb-3">
             <strong>Total Transaksi Hari Ini: {{ $transaksi->count() }}</strong>
         </div>
 
-        @foreach ($transaksi as $trans)
-            <div class="transaction-card">
-                <div class="transaction-header">
-                    <div>
-                        <div class="transaction-id">#{{ str_pad($trans->id, 6, '0', STR_PAD_LEFT) }}</div>
-                        <div class="transaction-time">
-                            <i class="fas fa-clock me-2"></i>{{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('H:i:s') }}
+        <div class="transaction-list">
+            @foreach ($transaksi as $trans)
+                <div class="transaction-item">
+                    <div class="trans-info-left">
+                        <span class="trans-id">TRX-{{ str_pad($trans->id, 3, '0', STR_PAD_LEFT) }}</span>
+                        <span class="trans-time"><i class="fas fa-clock me-1"></i>
+                            {{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('H:i:s') }}</span>
+                    </div>
+                    
+                    <div class="trans-right">
+                        <span class="trans-total">Rp {{ number_format($trans->total_harga, 0, ',', '.') }}</span>
+                        
+                        <div class="d-flex align-items-center">
+                            <button class="btn-detail" 
+                                    onclick="showDetail('{{ $trans->id }}', '{{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('d/m/Y | H:i:s') }}', '{{ number_format($trans->total_harga, 0, ',', '.') }}', '{{ number_format($trans->total_bayar, 0, ',', '.') }}', '{{ number_format($trans->kembalian, 0, ',', '.') }}', '{{ $trans->detail }}')">
+                                <i class="fas fa-search"></i>
+                            </button>
+
+                            <form method="POST" action="/kasir/{{ $trans->id }}" class="delete-form ms-3" onsubmit="return confirm('Hapus transaksi ini? Stok barang akan dikembalikan.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-delete-trans" title="Hapus Transaksi">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
-                    <div style="text-align: right;">
-                        <span style="background: #28a745; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem;">
-                            <i class="fas fa-check-circle me-1"></i>Selesai
-                        </span>
-                    </div>
                 </div>
-
-                <div class="transaction-items">
-                    <div style="font-weight: 600; margin-bottom: 10px; color: #333;">
-                        <i class="fas fa-list me-2"></i>Item Pembelian
-                    </div>
-                    @foreach ($trans->detail as $detail)
-                        <div class="item-detail">
-                            <div class="item-name">
-                                <strong>{{ $detail->barang->nama }}</strong>
-                                <br>
-                                <small style="color: #999;">{{ $detail->barang->kode_barang }}</small>
-                            </div>
-                            <div class="item-qty">{{ $detail->qty }} x</div>
-                            <div class="item-price">{{ number_format($detail->harga_satuan, 0, ',', '.') }}</div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <div class="transaction-summary">
-                    <div class="summary-row">
-                        <span>Total Harga:</span>
-                        <span>Rp {{ number_format($trans->total_harga, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Uang Masuk:</span>
-                        <span>Rp {{ number_format($trans->total_bayar, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Kembalian:</span>
-                        <span>Rp {{ number_format($trans->kembalian, 0, ',', '.') }}</span>
-                    </div>
-                </div>
-
-                <div class="transaction-footer">
-                    <div style="color: #666; font-size: 0.9rem;">
-                        <i class="fas fa-calendar me-1"></i>{{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('d/m/Y H:i') }}
-                    </div>
-                    <form method="POST" action="/kasir/{{ $trans->id }}" class="delete-form" onsubmit="return confirm('Hapus transaksi ini? Stok barang akan dikembalikan.');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-delete-transaction">
-                            <i class="fas fa-trash me-2"></i>Hapus
-                        </button>
-                    </form>
-                </div>
-            </div>
-        @endforeach
+            @endforeach
+        </div>
     @else
-        <div class="empty-state">
-            <div class="empty-state-icon">
-                <i class="fas fa-inbox"></i>
-            </div>
-            <p class="empty-state-text">Tidak ada transaksi pada hari ini</p>
-            <a href="/kasir" class="btn-kembali" style="margin-top: 15px;">
-                <i class="fas fa-arrow-left me-2"></i>Kembali ke POS
-            </a>
+        <div class="text-center py-5 bg-white rounded shadow-sm">
+            <i class="fas fa-inbox fa-3x text-light mb-3"></i>
+            <p class="text-muted">Tidak ada transaksi pada hari ini</p>
         </div>
     @endif
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title w-100 text-center fw-bold">Detail Transaksi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <p class="mb-0 text-muted">Transaksi: <span id="modal-id" class="text-dark fw-bold"></span></p>
+                    <p class="text-muted">Tanggal: <span id="modal-date" class="text-dark"></span></p>
+                </div>
+
+                <div class="fw-bold mb-2">Item Pembelian:</div>
+                <div id="modal-items-list">
+                    </div>
+
+                <div class="divider"></div>
+
+                <div class="detail-row fw-bold">
+                    <span>Total:</span>
+                    <span id="modal-total"></span>
+                </div>
+                <div class="detail-row text-muted">
+                    <span>Bayar:</span>
+                    <span id="modal-bayar"></span>
+                </div>
+                <div class="detail-row text-success fw-bold">
+                    <span>Kembali:</span>
+                    <span id="modal-kembali"></span>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-success w-100 py-2" data-bs-dismiss="modal">TUTUP</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    // Konfirmasi sebelum delete
-    document.querySelectorAll('.delete-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            if (!confirm('Apakah Anda yakin ingin menghapus transaksi ini? Stok barang akan dikembalikan.')) {
-                e.preventDefault();
-            }
+    function showDetail(id, date, total, bayar, kembali, itemsJson) {
+        // Parse ID dengan format TRX-00x
+        document.getElementById('modal-id').innerText = 'TRX-' + id.padStart(3, '0');
+        document.getElementById('modal-date').innerText = date;
+        document.getElementById('modal-total').innerText = 'Rp ' + total;
+        document.getElementById('modal-bayar').innerText = 'Rp ' + bayar;
+        document.getElementById('modal-kembali').innerText = 'Rp ' + kembali;
+
+        // Render Items
+        const items = JSON.parse(itemsJson);
+        let itemsHtml = '';
+        items.forEach(item => {
+            // Karena data itemsJson biasanya berisi barang_id, kita butuh nama barangnya
+            // Di sini kita asumsikan relasi 'barang' ikut ter-load di JSON
+            const namaBarang = item.barang ? item.barang.nama : 'Produk';
+            const subtotal = item.qty * item.harga_satuan;
+            itemsHtml += `
+                <div class="text-muted small">
+                    ${namaBarang} (${item.qty}x) = Rp ${subtotal.toLocaleString('id-ID')}
+                </div>`;
         });
-    });
+        document.getElementById('modal-items-list').innerHTML = itemsHtml;
+
+        // Tampilkan Modal
+        var myModal = new bootstrap.Modal(document.getElementById('detailModal'));
+        myModal.show();
+    }
 </script>
 @endsection
