@@ -110,7 +110,7 @@
         <div class="badge-periode shadow-sm">
             <i class="fas fa-calendar-alt me-2"></i>
             @if(request('start_date') && request('end_date'))
-                {{ \Carbon\Carbon::parse(request('start_date'))->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse(request('end_date'))->translatedFormat('d M Y') }}
+                {{ \Carbon\Carbon::parse(request('start_date'))->setTimezone('Asia/Jakarta')->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse(request('end_date'))->setTimezone('Asia/Jakarta')->translatedFormat('d M Y') }}
             @else
                 Semua Data
             @endif
@@ -158,14 +158,21 @@
                         <span class="trans-date">
                             <i class="far fa-clock me-1"></i> 
                             {{-- Format Bahasa Indonesia --}}
-                            {{ \Carbon\Carbon::parse($trans->tanggal)->translatedFormat('d F Y | H:i') }}
+                            {{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->translatedFormat('d F Y | H:i') }} WIB
                         </span>
                     </div>
                     
                     <div class="trans-right">
                         <span class="trans-total">Rp {{ number_format($trans->total_harga, 0, ',', '.') }}</span>
                         <button class="btn-detail ms-3" 
-                                onclick="showDetail('{{ $trans->id }}', '{{ \Carbon\Carbon::parse($trans->tanggal)->translatedFormat('d F Y | H:i') }}', '{{ number_format($trans->total_harga, 0, ',', '.') }}', '{{ number_format($trans->total_bayar, 0, ',', '.') }}', '{{ number_format($trans->kembalian, 0, ',', '.') }}', '{{ $trans->detail }}')">
+                                onclick="showDetail(
+                                    '{{ $trans->id }}', 
+                                    '{{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->translatedFormat('d F Y | H:i') }} WIB', 
+                                    '{{ number_format($trans->total_harga, 0, ',', '.') }}', 
+                                    '{{ number_format($trans->total_bayar, 0, ',', '.') }}', 
+                                    '{{ number_format($trans->kembalian, 0, ',', '.') }}', 
+                                    '{{ $trans->detail }}'
+                                )">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
