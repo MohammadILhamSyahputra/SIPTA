@@ -572,23 +572,27 @@
             const id = item.dataset.id;
             const nama = item.querySelector('.search-item-name').textContent;
             const harga = item.dataset.harga;
-            const stok = item.dataset.stok;
+            const stok = parseInt(item.dataset.stok); // Pastikan jadi Integer
+
+            // CEK STOK DI SINI
+            if (stok <= 0) {
+                alert('Maaf, stok barang ini sedang kosong (0)!');
+                row.querySelector('.search-results').classList.remove('show');
+                row.querySelector('.input-barang').value = '';
+                return;
+            }
 
             row.querySelector('.input-barang').value = nama;
             row.querySelector('.item-id').value = id;
             row.querySelector('.harga-satuan').value = formatCurrency(harga);
             
-            // Set max qty berdasarkan stok
             const qtyInput = row.querySelector('.input-qty');
             qtyInput.max = stok;
             qtyInput.dataset.stok = stok;
+            qtyInput.value = 1; // Otomatis isi 1 agar langsung valid
             
-            // Store stok info di row untuk reference
             row.dataset.stok = stok;
-            
             row.querySelector('.search-results').classList.remove('show');
-
-            // Focus to qty field
             qtyInput.focus();
             
             calculateRow(rowIndex);
@@ -605,34 +609,31 @@
     });
 
     // Calculate when qty changes
+    // Calculate when qty changes
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('input-qty')) {
             const rowIndex = e.target.dataset.rowIndex;
             const row = document.querySelector(`.item-row[data-row-index="${rowIndex}"]`);
             const qtyInput = e.target;
-            const stok = parseInt(row.dataset.stok) || 0;
+            const stok = parseInt(row.dataset.stok); // Hapus '|| 0' agar 0 tetap terbaca sebagai angka
             let qty = parseInt(qtyInput.value) || 0;
             
-            // Validasi qty tidak melebihi stok
-            if (qty > stok && stok > 0) {
+            // Perbaiki logika: Jika qty lebih dari stok (termasuk jika stok 0)
+            if (qty > stok) {
                 qtyInput.value = stok;
                 qty = stok;
-                // Show warning
-                const errorDiv = row.querySelector('.qty-error');
-                if (errorDiv) {
-                    errorDiv.remove();
+
+                // Tampilkan warning
+                let errorDiv = row.querySelector('.qty-error');
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'qty-error';
+                    qtyInput.parentNode.appendChild(errorDiv);
                 }
-                const warning = document.createElement('div');
-                warning.className = 'qty-error';
-                warning.style.color = '#dc3545';
-                warning.style.fontSize = '0.85rem';
-                warning.style.marginTop = '3px';
-                warning.textContent = `Stok hanya ${stok} unit`;
-                qtyInput.parentNode.appendChild(warning);
+                errorDiv.textContent = stok <= 0 ? "Stok Kosong!" : `Maksimal stok ${stok}`;
                 
-                // Remove warning after 3 seconds
                 setTimeout(() => {
-                    if (warning.parentNode) warning.remove();
+                    if (errorDiv.parentNode) errorDiv.remove();
                 }, 3000);
             }
             
@@ -823,6 +824,12 @@
         document.querySelectorAll('.item-row.filled').forEach(row => {
             const itemId = row.querySelector('.item-id').value;
             const qty = parseInt(row.querySelector('.input-qty').value);
+            if (qty <= 0) {
+                alert('Ada item dengan jumlah 0. Harap hapus atau isi jumlahnya.');
+                btnConfirm.disabled = false;
+                btnConfirm.innerHTML = originalText;
+                return; // Berhenti jika ada qty 0
+            }
             const hargaSatuanText = row.querySelector('.harga-satuan').value;
             const hargaSatuan = parseInt(hargaSatuanText.replace(/\D/g, ''));
             const subtotalText = row.querySelector('.subtotal').value;

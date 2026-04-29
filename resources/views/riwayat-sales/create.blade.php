@@ -48,7 +48,7 @@
                                 required>
                                 
                                 @php
-                                    $statuses = ['belum datang', 'proses', 'sudah datang'];
+                                    $statuses = ['belum datang', 'sudah datang'];
                                 @endphp
                                 
                                 @foreach ($statuses as $status)

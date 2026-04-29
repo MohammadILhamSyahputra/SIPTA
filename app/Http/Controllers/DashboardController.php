@@ -17,9 +17,14 @@ class DashboardController extends Controller
         $total_kategori = Kategori::count();
         $total_sales = Sales::count();
         
+        // Fitur Baru: Ambil barang yang stoknya menipis (< 10)
+        $stok_menipis = Barang::where('stok', '<', 10)
+                            ->where('stok', '>=', 0)
+                            ->get();
+
         $stok_per_item = Barang::select('nama', 'stok')
-                                 ->where('stok', '>', 0)
-                                 ->get();
+                                ->where('stok', '>', 0)
+                                ->get();
 
         $item_labels = $stok_per_item->pluck('nama')->toArray();
         $item_stok_data = $stok_per_item->pluck('stok')->toArray();
@@ -37,6 +42,7 @@ class DashboardController extends Controller
             'total_barang' => $total_barang,
             'total_kategori' => $total_kategori,
             'total_sales' => $total_sales, 
+            'stok_menipis' => $stok_menipis, // Kirim data stok menipis
 
             'item_labels' => $item_labels, 
             'item_stok_data' => $item_stok_data, 

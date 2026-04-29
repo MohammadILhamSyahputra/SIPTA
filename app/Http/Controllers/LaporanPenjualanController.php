@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 //use App\Models\DetailPenjualan; // Ganti dari SaleDetail
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Transaksi; 
+use App\Models\DetailTransaksi;
+use App\Models\Barang;
 use PDF;
 
 class LaporanPenjualanController extends Controller
@@ -15,6 +18,24 @@ class LaporanPenjualanController extends Controller
      *
      * @return \Illuminate\View\View
      */
+    public function riwayatSeluruhnya(Request $request)
+    {
+        // Set locale Carbon ke Indonesia
+        \Carbon\Carbon::setLocale('id');
+
+        $query = \App\Models\Transaksi::with('detail.barang');
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->end_date);
+        }
+
+        $transaksi = $query->orderBy('tanggal', 'desc')->get();
+        return view('laporan_barang.riwayat_seluruhnya', compact('transaksi'));
+    }
+
     public function index()
     {
         $startDate = Carbon::now()->startOfMonth()->format('Y-m-d');

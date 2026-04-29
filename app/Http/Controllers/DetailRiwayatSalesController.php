@@ -18,8 +18,18 @@ class DetailRiwayatSalesController extends Controller
 
     public function create($riwayat_sales_id)
     {
+        // $riwayat = RiwayatSales::findOrFail($riwayat_sales_id); 
+        // $barang = Barang::all();
+        // return view('detail-riwayat-sales.create-detail', compact('riwayat', 'barang'));
+            // 1. Ambil data riwayat
         $riwayat = RiwayatSales::findOrFail($riwayat_sales_id); 
-        $barang = Barang::all();
+        
+        // 2. Ambil nilai dari kolom sales_id (sesuai screenshot riwayat_sales kamu)
+        $isiSalesId = $riwayat->sales_id; 
+
+        // 3. Filter barang (Gunakan id_sales sesuai screenshot tabel barang kamu)
+        $barang = Barang::where('id_sales', $isiSalesId)->get();
+
         return view('detail-riwayat-sales.create-detail', compact('riwayat', 'barang'));
     }
 
@@ -53,8 +63,17 @@ class DetailRiwayatSalesController extends Controller
 
     public function edit($id)
     {
-        $detail = DetailRiwayatSales::with('barang', 'riwayat.sales')->findOrFail($id);
-        $barang = Barang::all();
+        // $detail = DetailRiwayatSales::with('barang', 'riwayat.sales')->findOrFail($id);
+        // $barang = Barang::all();
+        // return view('detail-riwayat-sales.edit-detail', compact('detail', 'barang'));
+        $detail = DetailRiwayatSales::with('riwayat')->findOrFail($id);
+    
+        // Ambil sales_id dari riwayat induknya
+        $isiSalesId = $detail->riwayat->sales_id;
+
+        // Filter barang menggunakan id_sales
+        $barang = Barang::where('id_sales', $isiSalesId)->get();
+
         return view('detail-riwayat-sales.edit-detail', compact('detail', 'barang'));
     }
 

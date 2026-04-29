@@ -50,7 +50,16 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="barang_id" class="form-label">Nama Barang</label>
-                            <select class="form-select @error('barang_id') is-invalid @enderror" id="barang_id" name="barang_id" required>
+                            {{-- <select class="form-select @error('barang_id') is-invalid @enderror" id="barang_id" name="barang_id" required>
+                                <option value="" disabled>Pilih Barang</option>
+                                @foreach ($barang as $item)
+                                    <option value="{{ $item->id }}" 
+                                        {{ old('barang_id', $detail->barang_id) == $item->id ? 'selected' : '' }}>
+                                        {{ $item->nama }}
+                                    </option>
+                                @endforeach
+                            </select> --}}
+                            <select class="form-select @error('barang_id') is-invalid @enderror" id="barang_id" disabled>
                                 <option value="" disabled>Pilih Barang</option>
                                 @foreach ($barang as $item)
                                     <option value="{{ $item->id }}" 
@@ -59,9 +68,16 @@
                                     </option>
                                 @endforeach
                             </select>
+
+                            <input type="hidden" name="barang_id" value="{{ $detail->barang_id }}">
+
                             @error('barang_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <small class="text-muted">Nama barang tidak dapat diubah pada mode edit.</small>
+                            {{-- @error('barang_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror --}}
                         </div>
                     </div>
 

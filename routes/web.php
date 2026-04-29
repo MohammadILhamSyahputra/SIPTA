@@ -42,6 +42,8 @@ Route::middleware(['auth', 'owner'])->group(function () {
     Route::post('/laporan-penjualan', [LaporanPenjualanController::class, 'filter'])->name('laporan.penjualan.filter');
 
     Route::get('/laporan-penjualan/export-pdf', [LaporanPenjualanController::class, 'exportPdf'])->name('laporan.penjualan.exportPdf');
+    Route::get('/laporan-riwayat-transaksi', [LaporanPenjualanController::class, 'riwayatSeluruhnya'])
+        ->name('laporan_barang.riwayat_seluruhnya');
     Route::resource('riwayat-sales', RiwayatSalesController::class);
     Route::get('riwayat-sales/{riwayat_sales_id}/detail/create',
         [DetailRiwayatSalesController::class, 'create'])->name('detail-riwayat-sales.create');

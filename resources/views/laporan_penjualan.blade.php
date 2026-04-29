@@ -1,5 +1,33 @@
 @extends('layouts.master')
 @section('title', 'Laporan Penjualan') 
+@section('styles')
+<style>
+    /* Desain Input Tanggal Kustom dd/mm/yyyy */
+    .date-input-custom {
+        position: relative;
+        color: transparent !important;
+    }
+
+    .date-input-custom::before {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        transform: translateY(-50%);
+        content: attr(data-date);
+        color: #495057;
+        pointer-events: none;
+    }
+
+    .date-input-custom::-webkit-calendar-picker-indicator {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        z-index: 1;
+    }
+</style>
+@endsection
 @section('content')
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Laporan Penjualan</h1>
@@ -11,11 +39,15 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label for="start_date" class="font-weight-bold">Tanggal Mulai</label>
-                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ $startDate ?? old('start_date') }}" required>
+                        <input type="date" name="start_date" id="start_date" class="form-control date-input-custom" 
+                            value="{{ $startDate ?? old('start_date') }}" 
+                            data-date="{{ isset($startDate) ? \Carbon\Carbon::parse($startDate)->format('d/m/Y') : 'dd/mm/yyyy' }}" required>
                     </div>
                     <div class="col-md-4">
                         <label for="end_date" class="font-weight-bold">Tanggal Akhir</label>
-                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ $endDate ?? old('end_date') }}" required>
+                        <input type="date" name="end_date" id="end_date" class="form-control date-input-custom" 
+                            value="{{ $endDate ?? old('end_date') }}" 
+                            data-date="{{ isset($endDate) ? \Carbon\Carbon::parse($endDate)->format('d/m/Y') : 'dd/mm/yyyy' }}" required>
                     </div>
                     <div class="col-md-4 d-flex align-items-end">
                         <button type="submit" class="btn btn-success mr-2">Tampilkan Laporan</button>
@@ -105,9 +137,27 @@
         const startDateInput = document.getElementById('start_date');
         const endDateInput = document.getElementById('end_date');
 
+        // Fungsi Update Format Visual dd/mm/yyyy
+        function updateVisualFormat(input) {
+            let val = input.value;
+            if (val) {
+                let date = new Date(val);
+                let d = ("0" + date.getDate()).slice(-2);
+                let m = ("0" + (date.getMonth() + 1)).slice(-2);
+                let y = date.getFullYear();
+                input.setAttribute('data-date', d + '/' + m + '/' + y);
+            } else {
+                input.setAttribute('data-date', 'dd/mm/yyyy');
+            }
+        }
+
         function updateExportPdfLink() {
             const startDate = startDateInput.value;
             const endDate = endDateInput.value;
+
+            // Jalankan update visual setiap ada perubahan
+            updateVisualFormat(startDateInput);
+            updateVisualFormat(endDateInput);
 
             if (startDate && endDate) {
                 const exportUrl = `{{ route('laporan.penjualan.exportPdf') }}?start_date=${startDate}&end_date=${endDate}`;
@@ -122,6 +172,7 @@
         startDateInput.addEventListener('change', updateExportPdfLink);
         endDateInput.addEventListener('change', updateExportPdfLink);
 
+        // Jalankan saat pertama kali load untuk nilai default
         updateExportPdfLink();
     });
 </script>

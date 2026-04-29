@@ -2,6 +2,34 @@
 
 @section('title', 'Laporan Barang Terlaris')
 
+@section('styles')
+<style>
+    .date-input-custom {
+        position: relative;
+        color: transparent !important;
+    }
+
+    .date-input-custom::before {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        transform: translateY(-50%);
+        content: attr(data-date);
+        color: #495057;
+        pointer-events: none;
+    }
+
+    .date-input-custom::-webkit-calendar-picker-indicator {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        z-index: 1;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="container-fluid py-4">
     <div class="row">
@@ -15,13 +43,15 @@
                     <div class="row align-items-end">
                         <div class="col-md-5">
                             <label for="tgl_mulai" class="form-label font-weight-bold">Tanggal Mulai:</label>
-                            <input type="date" name="tgl_mulai" id="tgl_mulai" class="form-control" 
-                                value="{{ $tglMulai ?? date('Y-m-01') }}" required>
+                            <input type="date" name="tgl_mulai" id="tgl_mulai" class="form-control date-input-custom" 
+                                value="{{ $tglMulai ?? date('Y-m-01') }}" 
+                                data-date="{{ isset($tglMulai) ? \Carbon\Carbon::parse($tglMulai)->format('d/m/Y') : date('d/m/Y', strtotime('first day of this month')) }}" required>
                         </div>
                         <div class="col-md-5">
                             <label for="tgl_akhir" class="form-label font-weight-bold">Tanggal Akhir:</label>
-                            <input type="date" name="tgl_akhir" id="tgl_akhir" class="form-control" 
-                                value="{{ $tglAkhir ?? date('Y-m-d') }}" required>
+                            <input type="date" name="tgl_akhir" id="tgl_akhir" class="form-control date-input-custom" 
+                                value="{{ $tglAkhir ?? date('Y-m-d') }}" 
+                                data-date="{{ isset($tglAkhir) ? \Carbon\Carbon::parse($tglAkhir)->format('d/m/Y') : date('d/m/Y') }}" required>
                         </div>
                         <div class="col-md-2 mt-3 mt-md-0">
                             <button type="submit" class="btn btn-success w-100">
@@ -99,6 +129,16 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+    $('.date-input-custom').on('change', function() {
+        let val = $(this).val();
+        if (val) {
+            let date = new Date(val);
+            let d = ("0" + date.getDate()).slice(-2);
+            let m = ("0" + (date.getMonth() + 1)).slice(-2);
+            let y = date.getFullYear();
+            $(this).attr('data-date', d + '/' + m + '/' + y);
+        }
+    });
     const chartLabels = @json($chartLabels);
     const chartData = @json($chartData);
 
