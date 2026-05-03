@@ -7,6 +7,8 @@ use App\Models\Transaksi;
 use App\Models\DetailTransaksi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class KasirController extends Controller
 {
@@ -50,8 +52,10 @@ class KasirController extends Controller
                 'items.*.harga_satuan' => 'required|numeric|min:1',
                 'items.*.subtotal' => 'required|numeric|min:1',
                 'total_harga' => 'required|numeric|min:1',
-                'total_bayar' => 'required|numeric|min:1',
+                //'total_bayar' => 'required|numeric|min:1',
+                'total_bayar' => 'required|numeric|min:0',
                 'kembalian' => 'required|numeric|min:0',
+                'metode_pembayaran' => 'required|in:tunai,qris',
             ]);
 
             \Log::info('Validated data:', $validated);
@@ -84,11 +88,19 @@ class KasirController extends Controller
             \Log::info('Barang validation passed');
 
             // Create transaction
+            $status = 'success'; // Default untuk tunai
+            if ($validated['metode_pembayaran'] === 'qris') {
+                $status = 'pending';
+            }
+            $orderIdCustom = 'SIPTA-' . time();
             $transaksi = Transaksi::create([
-                'total_harga' => intval($validated['total_harga']),
-                'total_bayar' => intval($validated['total_bayar']),
-                'kembalian' => intval($validated['kembalian']),
-                'tanggal' => now(),
+                'order_id'          => $orderIdCustom,
+                'total_harga'       => intval($validated['total_harga']),
+                'metode_pembayaran' => $validated['metode_pembayaran'],
+                'status_pembayaran' => $status, // Gunakan variabel yang sudah dibuat
+                'total_bayar'       => intval($validated['total_bayar']),
+                'kembalian'         => intval($validated['kembalian']),
+                'tanggal'           => now(),
             ]);
 
             \Log::info('Transaction created:', ['id' => $transaksi->id]);
@@ -115,10 +127,48 @@ class KasirController extends Controller
 
             \Log::info('Transaction completed successfully');
 
+            // --- LOGIKA KHUSUS QRIS MIDTRANS ---
+            if ($validated['metode_pembayaran'] == 'qris') {
+                Config::$serverKey = config('services.midtrans.server_key');
+                Config::$isProduction = false;
+                Config::$isSanitized = true;
+                Config::$is3ds = true;
+
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $orderIdCustom,
+                        'gross_amount' => intval($transaksi->total_harga),
+                        //'gross_amount' => (int)$transaksi->total_harga,
+                    ],
+                    'customer_details' => [
+                        'first_name' => 'Pelanggan',
+                        'last_name' => 'SIPTA',
+                    ],
+                    //'enabled_payments' => ['qris'],
+                    'enabled_payments' => ['gopay', 'shopeepay'],
+                ];
+
+                $snapToken = Snap::getSnapToken($params);
+                
+                // Simpan token ke database
+                $transaksi->update(['snap_token' => $snapToken]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Token QRIS berhasil dibuat!',
+                    'snap_token' => $snapToken,
+                    'transaksi_id' => $transaksi->id,
+                    'order_id'   => $orderIdCustom,
+                    'metode' => 'qris'
+                ]);
+            }
+
+            // Respon jika Tunai
             return response()->json([
                 'success' => true,
                 'message' => 'Transaksi berhasil disimpan!',
                 'transaksi_id' => $transaksi->id,
+                'metode' => 'tunai'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation error:', $e->errors());
@@ -173,5 +223,33 @@ class KasirController extends Controller
         return redirect()
             ->route('kasir.history')
             ->with('success', 'Transaksi berhasil dihapus dan stok dikembalikan!');
+    }
+
+    // public function updateStatus(Request $request, $order_id)
+    // {
+    //     // Cari transaksi berdasarkan order_id
+    //     $transaksi = Transaksi::where('order_id', $order_id)->first();
+        
+    //     if ($transaksi) {
+    //         // Update status jadi success
+    //         $transaksi->update([
+    //             'status_pembayaran' => 'success'
+    //         ]);
+
+    //         return response()->json(['success' => true, 'message' => 'Status berhasil diupdate']);
+    //     }
+
+    //     return response()->json(['success' => false, 'message' => 'Transaksi tidak ditemukan'], 404);
+    // }
+    public function updateStatus(Request $request, $order_id)
+    {
+        // Cari transaksi berdasarkan string order_id (contoh: SIPTA-51-...)
+        $transaksi = Transaksi::where('order_id', $order_id)->first();
+        
+        if ($transaksi) {
+            $transaksi->update(['status_pembayaran' => 'success']);
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false], 404);
     }
 }

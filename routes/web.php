@@ -70,6 +70,8 @@ Route::middleware(['auth', 'kasir'])->group(function () {
     Route::post('/kasir/store', [KasirController::class, 'store'])->name('kasir.store');
     Route::get('/kasir/history', [KasirController::class, 'history'])->name('kasir.history');
     Route::delete('/kasir/{id}', [KasirController::class, 'destroy'])->name('kasir.destroy');
+
+    Route::post('/kasir/update-status/{order_id}', [KasirController::class, 'updateStatus'])->name('kasir.updateStatus');
 });
 
 // Route::resource('barang', BarangController::class);

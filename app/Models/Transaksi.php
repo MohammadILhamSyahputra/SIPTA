@@ -11,7 +11,7 @@ class Transaksi extends Model
     use HasFactory;
     protected $table = 'transaksi';
     protected $primaryKey = 'id';
-    protected $fillable = ['total_harga','total_bayar','kembalian','tanggal'];
+    protected $fillable = ['order_id', 'total_harga', 'metode_pembayaran', 'status_pembayaran', 'snap_token', 'total_bayar', 'kembalian', 'tanggal'];
     
     protected $casts = [
         'tanggal' => 'datetime',

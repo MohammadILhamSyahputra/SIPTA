@@ -124,6 +124,25 @@
         padding: 0;
         margin-left: 10px;
     }
+    /* Warna Status & Metode */
+    .badge-status {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .status-success { background: #d4edda; color: #155724; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    
+    .method-icon {
+        font-size: 0.85rem;
+        color: #555;
+        background: #f0f0f0;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-right: 8px;
+    }
 </style>
 @endsection
 
@@ -150,10 +169,21 @@
 
         <div class="transaction-list">
             @foreach ($transaksi as $trans)
-                <div class="transaction-item">
+                <div class="transaction-item" style="border-left: 4px solid {{ $trans->status_pembayaran == 'success' ? '#28a745' : '#ffc107' }}">
                     <div class="trans-info-left">
                         <span class="trans-id">TRX-{{ str_pad($trans->id, 3, '0', STR_PAD_LEFT) }}</span>
-                        <span class="trans-time"><i class="fas fa-clock me-1"></i>
+                        <div class="d-flex align-items-center mt-1">
+                            <!-- Menampilkan Metode -->
+                            <span class="method-icon">
+                                <i class="fas {{ $trans->metode_pembayaran == 'qris' ? 'fa-qrcode' : 'fa-money-bill-wave' }} me-1"></i>
+                                {{ strtoupper($trans->metode_pembayaran) }}
+                            </span>
+                            <!-- Menampilkan Status -->
+                            <span class="badge-status {{ $trans->status_pembayaran == 'success' ? 'status-success' : 'status-pending' }}">
+                                {{ $trans->status_pembayaran }}
+                            </span>
+                        </div>
+                        <span class="trans-time mt-1"><i class="fas fa-clock me-1"></i>
                             {{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('H:i:s') }}</span>
                     </div>
                     
@@ -161,8 +191,9 @@
                         <span class="trans-total">Rp {{ number_format($trans->total_harga, 0, ',', '.') }}</span>
                         
                         <div class="d-flex align-items-center">
+                            <!-- Tambahkan parameter status dan metode ke fungsi showDetail -->
                             <button class="btn-detail" 
-                                    onclick="showDetail('{{ $trans->id }}', '{{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('d/m/Y | H:i:s') }}', '{{ number_format($trans->total_harga, 0, ',', '.') }}', '{{ number_format($trans->total_bayar, 0, ',', '.') }}', '{{ number_format($trans->kembalian, 0, ',', '.') }}', '{{ $trans->detail }}')">
+                                    onclick="showDetail('{{ $trans->id }}', '{{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->format('d/m/Y | H:i:s') }}', '{{ number_format($trans->total_harga, 0, ',', '.') }}', '{{ number_format($trans->total_bayar, 0, ',', '.') }}', '{{ number_format($trans->kembalian, 0, ',', '.') }}', '{{ $trans->detail }}', '{{ $trans->status_pembayaran }}', '{{ $trans->metode_pembayaran }}')">
                                 <i class="fas fa-search"></i>
                             </button>
 
@@ -197,6 +228,8 @@
                 <div class="mb-3">
                     <p class="mb-0 text-muted">Transaksi: <span id="modal-id" class="text-dark fw-bold"></span></p>
                     <p class="text-muted">Tanggal: <span id="modal-date" class="text-dark"></span></p>
+                    <p class="mb-0 text-muted">Metode: <span id="modal-metode" class="text-dark fw-bold text-uppercase"></span></p>
+                    <p class="text-muted">Status: <span id="modal-status" class="badge-status"></span></p>
                 </div>
 
                 <div class="fw-bold mb-2">Item Pembelian:</div>
@@ -229,20 +262,26 @@
 
 @section('scripts')
 <script>
-    function showDetail(id, date, total, bayar, kembali, itemsJson) {
-        // Parse ID dengan format TRX-00x
+    function showDetail(id, date, total, bayar, kembali, itemsJson, status, metode) {
+        // Info Dasar
         document.getElementById('modal-id').innerText = 'TRX-' + id.padStart(3, '0');
         document.getElementById('modal-date').innerText = date;
         document.getElementById('modal-total').innerText = 'Rp ' + total;
         document.getElementById('modal-bayar').innerText = 'Rp ' + bayar;
         document.getElementById('modal-kembali').innerText = 'Rp ' + kembali;
+        
+        // Set Metode & Status
+        document.getElementById('modal-metode').innerText = metode;
+        const statusElem = document.getElementById('modal-status');
+        statusElem.innerText = status;
+        
+        // Atur Warna Status di Modal
+        statusElem.className = 'badge-status ' + (status === 'success' ? 'status-success' : 'status-pending');
 
         // Render Items
         const items = JSON.parse(itemsJson);
         let itemsHtml = '';
         items.forEach(item => {
-            // Karena data itemsJson biasanya berisi barang_id, kita butuh nama barangnya
-            // Di sini kita asumsikan relasi 'barang' ikut ter-load di JSON
             const namaBarang = item.barang ? item.barang.nama : 'Produk';
             const subtotal = item.qty * item.harga_satuan;
             itemsHtml += `
