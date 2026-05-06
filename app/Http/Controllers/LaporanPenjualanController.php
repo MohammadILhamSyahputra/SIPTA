@@ -20,20 +20,28 @@ class LaporanPenjualanController extends Controller
      */
     public function riwayatSeluruhnya(Request $request)
     {
-        // Set locale Carbon ke Indonesia
         \Carbon\Carbon::setLocale('id');
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $metode = $request->input('metode');
+
+        // Buat placeholder untuk bulan berjalan
+        $placeholderStart = now()->startOfMonth()->format('d/m/Y');
+        $placeholderEnd = now()->endOfMonth()->format('d/m/Y');
 
         $query = \App\Models\Transaksi::with('detail.barang');
 
-        if ($request->filled('start_date')) {
-            $query->whereDate('tanggal', '>=', $request->start_date);
-        }
-        if ($request->filled('end_date')) {
-            $query->whereDate('tanggal', '<=', $request->end_date);
-        }
+        // Kueri filter hanya jalan jika tombol "Filter" diklik (input terisi)
+        if ($startDate) { $query->whereDate('tanggal', '>=', $startDate); }
+        if ($endDate) { $query->whereDate('tanggal', '<=', $endDate); }
+        if ($request->filled('metode')) { $query->where('metode_pembayaran', $metode); }
 
         $transaksi = $query->orderBy('tanggal', 'desc')->get();
-        return view('laporan_barang.riwayat_seluruhnya', compact('transaksi'));
+
+        return view('laporan_barang.riwayat_seluruhnya', compact(
+            'transaksi', 'startDate', 'endDate', 'placeholderStart', 'placeholderEnd'
+        ));
     }
 
     public function index()

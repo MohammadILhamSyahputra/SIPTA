@@ -91,6 +91,40 @@
         z-index: 1;
     }
 
+    /* Warna Status & Metode */
+    .badge-status {
+        font-size: 0.7rem;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-left: 10px;
+    }
+    .status-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+    .status-pending { background: #fff8e1; color: #f57f17; border: 1px solid #ffecb3; }
+    
+    .method-tag {
+        font-size: 0.75rem;
+        color: #546e7a;
+        background: #eceff1;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Jika input tidak memiliki value, buat teks data-date jadi abu-abu */
+    .date-input-custom[value=""]::before {
+        color: #adb5bd !important; /* Warna abu-abu seperti placeholder */
+        font-style: italic;
+    }
+
+    /* Modifikasi border kiri berdasarkan status */
+    .border-success { border-left: 5px solid #28a745 !important; }
+    .border-pending { border-left: 5px solid #ffc107 !important; }
+
     /* Modal Styling */
     .modal-content { border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .modal-header { border-bottom: 1px solid #f8f9fa; padding: 25px; }
@@ -121,25 +155,35 @@
     <div class="card filter-card mb-4">
         <div class="card-body p-4">
             <form action="{{ route('laporan_barang.riwayat_seluruhnya') }}" method="GET" class="row g-3 align-items-end">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label small fw-bold text-uppercase text-muted">Tanggal Awal</label>
                     <input type="date" name="start_date" class="form-control date-input-custom" 
-                        value="{{ request('start_date') }}" 
-                        data-date="{{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('d/m/Y') : 'dd/mm/yyyy' }}">
+                        value="{{ $startDate ?? '' }}" 
+                        data-date="{{ $startDate ? \Carbon\Carbon::parse($startDate)->format('d/m/Y') : $placeholderStart }}">
                 </div>
-                <div class="col-md-4">
+
+                <div class="col-md-3">
                     <label class="form-label small fw-bold text-uppercase text-muted">Tanggal Akhir</label>
                     <input type="date" name="end_date" class="form-control date-input-custom" 
-                        value="{{ request('end_date') }}" 
-                        data-date="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('d/m/Y') : 'dd/mm/yyyy' }}">
+                        value="{{ $endDate ?? '' }}" 
+                        data-date="{{ $endDate ? \Carbon\Carbon::parse($endDate)->format('d/m/Y') : $placeholderEnd }}">
                 </div>
-                <div class="col-md-4">
+                <!-- TAMBAHKAN FILTER METODE DI SINI -->
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-uppercase text-muted">Metode</label>
+                    <select name="metode" class="form-select shadow-sm">
+                        <option value="">Semua Metode</option>
+                        <option value="tunai" {{ request('metode') == 'tunai' ? 'selected' : '' }}>Tunai</option>
+                        <option value="qris" {{ request('metode') == 'qris' ? 'selected' : '' }}>QRIS</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1 shadow-sm">
+                        <button type="submit" class="btn btn-primary shadow-sm w-100">
                             <i class="fas fa-filter me-2"></i>Filter
                         </button>
-                        @if(request('start_date') || request('end_date'))
-                            <a href="{{ route('laporan_barang.riwayat_seluruhnya') }}" class="btn btn-light btn-lg shadow-sm" title="Reset">
+                        @if(request('start_date') || request('end_date') || request('metode'))
+                            <a href="{{ route('laporan_barang.riwayat_seluruhnya') }}" class="btn btn-light shadow-sm" title="Reset">
                                 <i class="fas fa-undo"></i>
                             </a>
                         @endif
@@ -152,18 +196,31 @@
     @if ($transaksi->count() > 0)
         <div class="transaction-list">
             @foreach ($transaksi as $trans)
-                <div class="transaction-item">
+                <div class="transaction-item {{ $trans->status_pembayaran == 'success' ? 'border-success' : 'border-pending' }}">
                     <div class="trans-info-left">
-                        <span class="trans-id">TRX-{{ str_pad($trans->id, 3, '0', STR_PAD_LEFT) }}</span>
-                        <span class="trans-date">
-                            <i class="far fa-clock me-1"></i> 
-                            {{-- Format Bahasa Indonesia --}}
-                            {{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->translatedFormat('d F Y | H:i') }} WIB
-                        </span>
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="trans-id">TRX-{{ str_pad($trans->id, 3, '0', STR_PAD_LEFT) }}</span>
+                            <!-- Badge Status -->
+                            <span class="badge-status {{ $trans->status_pembayaran == 'success' ? 'status-success' : 'status-pending' }}">
+                                {{ $trans->status_pembayaran }}
+                            </span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- Tag Metode -->
+                            <span class="method-tag">
+                                <i class="fas {{ $trans->metode_pembayaran == 'qris' ? 'fa-qrcode' : 'fa-money-bill-wave' }}"></i>
+                                {{ strtoupper($trans->metode_pembayaran) }}
+                            </span>
+                            <span class="trans-date">
+                                <i class="far fa-clock me-1"></i> 
+                                {{ \Carbon\Carbon::parse($trans->tanggal)->setTimezone('Asia/Jakarta')->translatedFormat('d F Y | H:i') }} WIB
+                            </span>
+                        </div>
                     </div>
                     
                     <div class="trans-right">
                         <span class="trans-total">Rp {{ number_format($trans->total_harga, 0, ',', '.') }}</span>
+                        <!-- Tambahkan parameter status & metode ke fungsi showDetail -->
                         <button class="btn-detail ms-3" 
                                 onclick="showDetail(
                                     '{{ $trans->id }}', 
@@ -171,7 +228,9 @@
                                     '{{ number_format($trans->total_harga, 0, ',', '.') }}', 
                                     '{{ number_format($trans->total_bayar, 0, ',', '.') }}', 
                                     '{{ number_format($trans->kembalian, 0, ',', '.') }}', 
-                                    '{{ $trans->detail }}'
+                                    '{{ $trans->detail }}',
+                                    '{{ $trans->status_pembayaran }}',
+                                    '{{ $trans->metode_pembayaran }}'
                                 )">
                             <i class="fas fa-chevron-right"></i>
                         </button>
@@ -200,6 +259,19 @@
                     <div>
                         <div class="text-muted small text-uppercase fw-bold">ID Transaksi</div>
                         <div id="modal-id" class="fw-bold h5 text-primary"></div>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-muted small text-uppercase fw-bold">Metode Pembayaran</div>
+                        <div id="modal-metode" class="fw-bold text-dark text-uppercase"></div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mb-4">
+                    <div>
+                        <div class="text-muted small text-uppercase fw-bold">Status</div>
+                        <div class="d-flex align-items-center gap-2">
+                            {{-- <div id="modal-id" class="fw-bold h5 text-primary mb-0"></div> --}}
+                            <span id="modal-status" class="badge-status"></span>
+                        </div>
                     </div>
                     <div class="text-end">
                         <div class="text-muted small text-uppercase fw-bold">Waktu</div>
@@ -247,12 +319,18 @@
             $(this).attr('data-date', 'dd/mm/yyyy');
         }
     });
-    function showDetail(id, date, total, bayar, kembali, itemsJson) {
+    function showDetail(id, date, total, bayar, kembali, itemsJson, status, metode) {
         document.getElementById('modal-id').innerText = 'TRX-' + id.padStart(3, '0');
         document.getElementById('modal-date').innerText = date;
         document.getElementById('modal-total').innerText = 'Rp ' + total;
         document.getElementById('modal-bayar').innerText = 'Rp ' + bayar;
         document.getElementById('modal-kembali').innerText = 'Rp ' + kembali;
+        
+        // Tampilkan Metode & Status
+        document.getElementById('modal-metode').innerText = metode;
+        const statusElem = document.getElementById('modal-status');
+        statusElem.innerText = status;
+        statusElem.className = 'badge-status ' + (status === 'success' ? 'status-success' : 'status-pending');
 
         const items = JSON.parse(itemsJson);
         let itemsHtml = '';
