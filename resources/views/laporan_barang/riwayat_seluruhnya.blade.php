@@ -121,6 +121,17 @@
         font-style: italic;
     }
 
+    /* Desain Card Total Pendapatan */
+    .total-income-card {
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
+    }
+    .income-label { font-size: 0.85rem; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+    .income-value { font-size: 1.5rem; font-weight: 800; }
+
     /* Modifikasi border kiri berdasarkan status */
     .border-success { border-left: 5px solid #28a745 !important; }
     .border-pending { border-left: 5px solid #ffc107 !important; }
@@ -146,7 +157,7 @@
             @if(request('start_date') && request('end_date'))
                 {{ \Carbon\Carbon::parse(request('start_date'))->setTimezone('Asia/Jakarta')->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse(request('end_date'))->setTimezone('Asia/Jakarta')->translatedFormat('d M Y') }}
             @else
-                Semua Data
+                Total Data
             @endif
             <span class="ms-2 badge bg-primary text-white">{{ $transaksi->count() }}</span>
         </div>
@@ -190,6 +201,23 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card total-income-card">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="income-label fw-bold">Total Pendapatan (Berdasarkan Filter)</div>
+                        <div class="income-value mt-1">
+                            Rp {{ number_format($transaksi->sum('total_harga'), 0, ',', '.') }}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <i class="fas fa-wallet fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

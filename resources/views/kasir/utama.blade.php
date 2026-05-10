@@ -1933,21 +1933,35 @@
                         onSuccess: function(result) { 
                             console.log("Pembayaran sukses:", result);
                             
-                            // Panggil route update-status yang sudah kita bahas sebelumnya
+                            // 1. Update status di database secara background
                             fetch('/kasir/update-status/' + result.order_id, {
                                 method: 'POST',
                                 headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}', // Gunakan fungsi utility yang sudah kamu buat
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                     'Content-Type': 'application/json'
                                 },
                                 body: JSON.stringify({ status: 'success' })
                             })
                             .then(response => {
-                                // Setelah database terupdate, baru pindah ke halaman history
-                                window.location.href = "/kasir/history"; 
+                                // 2. Persiapkan data untuk modal konfirmasi nota
+                                // Kita ambil data dari tampilan utama POS
+                                const totalHarga = document.getElementById('total-harga').textContent;
+                                
+                                document.getElementById('konfirmasi-total-harga').textContent = totalHarga;
+                                document.getElementById('konfirmasi-uang-masuk').textContent = totalHarga; // QRIS uang pas
+                                document.getElementById('konfirmasi-kembalian').textContent = formatCurrency(0);
+
+                                // 3. Tutup modal pembayaran (input) dan tampilkan modal konfirmasi (nota)
+                                document.getElementById('modal-pembayaran').classList.remove('show');
+                                document.getElementById('modal-konfirmasi').classList.add('show');
+                                
+                                // Kembalikan tombol processing ke asal
+                                btnConfirm.disabled = false;
+                                btnConfirm.innerHTML = originalText;
                             })
                             .catch(err => {
                                 console.error("Gagal update status:", err);
+                                alert("Pembayaran berhasil, tapi gagal memperbarui status. Silakan cek Riwayat.");
                                 window.location.href = "/kasir/history";
                             });
                         },
