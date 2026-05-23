@@ -96,3 +96,29 @@
     </div>
     
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusSelect = document.getElementById('status');
+        const tanggalInput = document.getElementById('tanggal_kunjungan');
+
+        function sesuaikanInputTanggal() {
+            // Jika status yang dipilih adalah 'belum datang'
+            if (statusSelect.value === 'belum datang') {
+                tanggalInput.disabled = true;
+                tanggalInput.value = ''; // Mengosongkan nilai jika owner sempat mengisi lalu mengubah status
+                tanggalInput.required = false;
+            } else {
+                // Jika status yang dipilih adalah 'sudah datang'
+                tanggalInput.disabled = false;
+                tanggalInput.required = true; // Opsional: mewajibkan isi tanggal jika sudah datang
+            }
+        }
+
+        // Jalankan fungsi saat pertama kali halaman dimuat (untuk mengecek data 'old' atau default)
+        sesuaikanInputTanggal();
+
+        // Jalankan fungsi setiap kali owner mengubah pilihan dropdown status
+        statusSelect.addEventListener('change', sesuaikanInputTanggal);
+    });
+</script>

@@ -11,6 +11,18 @@
                 <h1 class="h3 mb-0 text-gray-800">Form Jadwal Kunjungan Baru</h1>
             </div>
 
+            {{-- TAMBAHAN: Alert Peringatan untuk Mengingatkan Restok Produk --}}
+            @if(session('info_restok'))
+                <div class="alert alert-info alert-dismissible fade show shadow-sm border-left-info d-flex align-items-center justify-content-between" role="alert" style="border-left: 0.25rem solid #36b9cc !important;">
+                    <div>
+                        <i class="fas fa-info-circle mr-2"></i>
+                        {{ session('info_restok') }}
+                    </div>
+                    {{-- Menggunakan class bawaan Bootstrap 5 (btn-close) atau modifikasi tombol close --}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="background: none; border: none; font-size: 1.25rem; line-height: 1; color: #0c5460; cursor: pointer;">&times;</button>
+                </div>
+            @endif
+
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-success">Input Jadwal Kunjungan Sales</h6>
@@ -18,19 +30,28 @@
                 <div class="card-body">
                     <form action="{{ route('riwayat-sales.store') }}" method="POST">
                         @csrf
+
+                        {{-- 2. LOGIKA DISABLE DROPDOWN JIKA MASUK DARI DASHBOARD --}}
+                        {{-- Jika ada request('sales_id') dari URL, buat input hidden agar datanya tetap terkirim saat submit --}}
+                        @if(request('sales_id'))
+                            <input type="hidden" name="sales_id" value="{{ request('sales_id') }}">
+                        @endif
                         <div class="mb-3">
                             <label for="sales_id" class="form-label">Nama Sales</label>
                             <select 
                                 class="form-select @error('sales_id') is-invalid @enderror" 
                                 id="sales_id" 
                                 name="sales_id" 
-                                required>
+                                required
+                                {{-- Jika masuk membawa parameter sales_id dari dashboard, otomatis disable --}}
+                                {{ request('sales_id') ? 'disabled' : '' }}>
                                 
                                 <option value="">Pilih Sales</option>
                                 @foreach ($sales as $s)
                                     <option 
                                         value="{{ $s->id }}"
-                                        {{ (old('sales_id') == $s->id) ? 'selected' : '' }}>
+                                        {{-- MODIFIKASI: Cek old input ATAU cek sales_id dari lemparan URL dashboard --}}
+                                        {{ (old('sales_id') == $s->id || request('sales_id') == $s->id) ? 'selected' : '' }}>
                                         {{ $s->nama_sales }}
                                     </option>
                                 @endforeach
@@ -98,3 +119,29 @@
     </div>
     
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusSelect = document.getElementById('status');
+        const tanggalInput = document.getElementById('tanggal_kunjungan');
+
+        function sesuaikanInputTanggal() {
+            // Jika status yang dipilih adalah 'belum datang'
+            if (statusSelect.value === 'belum datang') {
+                tanggalInput.disabled = true;
+                tanggalInput.value = ''; // Mengosongkan nilai jika owner sempat mengisi lalu mengubah status
+                tanggalInput.required = false;
+            } else {
+                // Jika status yang dipilih adalah 'sudah datang'
+                tanggalInput.disabled = false;
+                tanggalInput.required = true; // Opsional: mewajibkan isi tanggal jika sudah datang
+            }
+        }
+
+        // Jalankan fungsi saat pertama kali halaman dimuat (untuk mengecek data 'old' atau default)
+        sesuaikanInputTanggal();
+
+        // Jalankan fungsi setiap kali owner mengubah pilihan dropdown status
+        statusSelect.addEventListener('change', sesuaikanInputTanggal);
+    });
+</script>

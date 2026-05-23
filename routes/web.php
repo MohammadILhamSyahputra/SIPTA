@@ -56,6 +56,7 @@ Route::middleware(['auth', 'owner'])->group(function () {
     Route::delete('detail-riwayat-sales/{id}', 
         [DetailRiwayatSalesController::class, 'destroy'])->name('detail-riwayat-sales.destroy');
     Route::resource('user', UserController::class)->except(['create', 'store', 'show']);
+    Route::get('/dashboard/cek-restok', [DashboardController::class, 'cekAksiRestok'])->name('dashboard.cek_restok');
 });
 
 // Route::resource('laporan-sales', SalesController::class);

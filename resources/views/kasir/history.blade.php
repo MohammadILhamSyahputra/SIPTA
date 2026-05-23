@@ -163,13 +163,38 @@
     @endif
 
     @if ($transaksi->count() > 0)
-        <div class="alert alert-primary mb-3">
+        {{-- <div class="alert alert-primary mb-3">
             <strong>Total Transaksi Hari Ini: {{ $transaksi->count() }}</strong>
+        </div> --}}
+        {{-- MODIFIKASI: Navigasi Filter & Informasi Pendapatan Hasil Filter --}}
+        <div class="card shadow-sm mb-4">
+            <div class="card-body bg-light rounded d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div class="btn-group" role="group" aria-label="Filter Metode">
+                    <button type="button" class="btn btn-outline-dark active filter-btn" data-method="all">
+                        <i class="fas fa-list me-1"></i> Semua (<span id="count-all">{{ $transaksi->count() }}</span>)
+                    </button>
+                    <button type="button" class="btn btn-outline-primary filter-btn" data-method="tunai">
+                        <i class="fas fa-money-bill-wave me-1"></i> Tunai (<span id="count-tunai">0</span>)
+                    </button>
+                    <button type="button" class="btn btn-outline-success filter-btn" data-method="qris">
+                        <i class="fas fa-qrcode me-1"></i> QRIS (<span id="count-qris">0</span>)
+                    </button>
+                </div>
+                
+                <div class="text-md-end">
+                    <div class="text-muted small text-uppercase fw-bold">Pendapatan Terfilter (<span id="filtered-count">{{ $transaksi->count() }}</span> Transaksi)</div>
+                    <h3 class="mb-0 font-weight-bold text-success" id="filtered-income">Rp 0</h3>
+                </div>
+            </div>
         </div>
 
         <div class="transaction-list">
             @foreach ($transaksi as $trans)
-                <div class="transaction-item" style="border-left: 4px solid {{ $trans->status_pembayaran == 'success' ? '#28a745' : '#ffc107' }}">
+                {{-- <div class="transaction-item" style="border-left: 4px solid {{ $trans->status_pembayaran == 'success' ? '#28a745' : '#ffc107' }}"> --}}
+                    <div class="transaction-item" 
+                        data-payment-method="{{ strtolower($trans->metode_pembayaran) }}" 
+                        data-amount="{{ $trans->total_harga }}"
+                        style="border-left: 4px solid {{ $trans->status_pembayaran == 'success' ? '#28a745' : '#ffc107' }}">
                     <div class="trans-info-left">
                         <span class="trans-id">TRX-{{ str_pad($trans->id, 3, '0', STR_PAD_LEFT) }}</span>
                         <div class="d-flex align-items-center mt-1">
@@ -295,5 +320,86 @@
         var myModal = new bootstrap.Modal(document.getElementById('detailModal'));
         myModal.show();
     }
+    // =================================================================
+    // KODE BARU: LOGIKA ENGINE FILTERING METODE & KALKULASI PENDAPATAN
+    // =================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const transactionItems = document.querySelectorAll('.transaction-item');
+        
+        // Fungsi helper format rupiah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
+        }
+
+        // Fungsi untuk menghitung total badge counter & kalkulasi pendapatan awal
+        function initKalkulasi() {
+            let totalTunai = 0;
+            let totalQris = 0;
+            let countTunai = 0;
+            let countQris = 0;
+            let totalPendapatanSemua = 0;
+
+            transactionItems.forEach(item => {
+                const method = item.dataset.paymentMethod;
+                const amount = parseInt(item.dataset.amount) || 0;
+
+                totalPendapatanSemua += amount;
+
+                if (method === 'tunai') {
+                    countTunai++;
+                    totalTunai += amount;
+                } else if (method === 'qris') {
+                    countQris++;
+                    totalQris += amount;
+                }
+            });
+
+            // Tampilkan jumlah data di badge tombol filter
+            document.getElementById('count-tunai').textContent = countTunai;
+            document.getElementById('count-qris').textContent = countQris;
+            
+            // Set default teks pendapatan untuk filter 'Semua' saat load pertama kali
+            document.getElementById('filtered-income').textContent = formatRupiah(totalPendapatanSemua);
+        }
+
+        // Jalankan fungsi hitung counter di awal load
+        initKalkulasi();
+
+        // Logika Klik pada Tombol Filter
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 1. Ganti status active class pada tombol filter
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                const selectedMethod = this.dataset.method;
+                let runningTotalIncome = 0;
+                let visibleCount = 0;
+
+                // 2. Sembunyikan atau Tampilkan baris transaksi berdasarkan filter
+                transactionItems.forEach(item => {
+                    const itemMethod = item.dataset.paymentMethod;
+                    const itemAmount = parseInt(item.dataset.amount) || 0;
+
+                    if (selectedMethod === 'all' || itemMethod === selectedMethod) {
+                        item.style.setProperty('display', 'flex', 'important');
+                        runningTotalIncome += itemAmount;
+                        visibleCount++;
+                    } else {
+                        item.style.setProperty('display', 'none', 'important');
+                    }
+                });
+
+                // 3. Update teks rangkuman pendapatan dan jumlah data terfilter di layar
+                document.getElementById('filtered-count').textContent = visibleCount;
+                document.getElementById('filtered-income').textContent = formatRupiah(runningTotalIncome);
+            });
+        });
+    });
 </script>
 @endsection

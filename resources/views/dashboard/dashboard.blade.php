@@ -4,6 +4,21 @@
 
 @section('content')
 
+{{-- Tambahan Flash Session Alert untuk Peringatan Skenario 1 --}}
+@if(session('warning_presensi'))
+<div class="row">
+    <div class="col-12 mb-2">
+        <div class="alert alert-warning alert-dismissible fade show shadow-sm border-left-warning d-flex align-items-center justify-content-between" role="alert" style="border-left: 0.25rem solid #f6c23e !important; background-color: #fff3cd; color: #856404;">
+            <div>
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Perhatian:</strong> {{ session('warning_presensi') }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="background: none; border: none; font-size: 1.25rem; color: #856404;">&times;</button>
+        </div>
+    </div>
+</div>
+@endif
+
 {{-- Notifikasi Stok Menipis (Hanya Muncul untuk Owner) --}}
 @if(auth()->user()->userType == 'owner' && count($stok_menipis) > 0)
 <div class="row">
@@ -34,7 +49,7 @@
                                     <th class="text-center" style="width: 50px;">No</th>
                                     <th>Nama Barang</th>
                                     <th class="text-center">Sisa Stok</th>
-                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Aksi</th> {{-- Mengubah Header dari Status menjadi Aksi --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,8 +60,13 @@
                                     <td class="text-center align-middle">
                                         <span class="badge badge-danger px-3 text-dark">{{ $item->stok }}</span>
                                     </td>
+                                    {{-- MODIFIKASI: Mengubah Teks Biasa Menjadi Tombol Restok ke Controller --}}
                                     <td class="text-center align-middle">
-                                        <span class="text-danger small font-weight-bold">Perlu Restok</span>
+                                        <a href="{{ route('dashboard.cek_restok', ['barang_id' => $item->id]) }}" 
+                                           class="btn btn-xs btn-danger font-weight-bold shadow-sm rounded-pill px-3"
+                                           style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                            <i class="fas fa-truck-loading mr-1"></i> Restok Barang
+                                        </a>
                                     </td>
                                 </tr>
                                 @endforeach

@@ -1826,6 +1826,35 @@
     document.getElementById('uang-masuk').addEventListener('input', checkPembayaranTunai);
 
     // 3. Pencarian Barang
+    // document.addEventListener('input', function(e) {
+    //     if (e.target.classList.contains('input-barang')) {
+    //         const rowIndex = e.target.dataset.rowIndex;
+    //         const query = e.target.value.trim();
+    //         const resultsDiv = document.querySelector(`.search-results[data-row-index="${rowIndex}"]`);
+
+    //         if (query.length < 1) {
+    //             resultsDiv.classList.remove('show');
+    //             return;
+    //         }
+
+    //         fetch(`/kasir/search?q=${encodeURIComponent(query)}`)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 if (data.length === 0) {
+    //                     resultsDiv.innerHTML = '<div class="search-item" style="color: #999; cursor: default;">Barang tidak ditemukan</div>';
+    //                 } else {
+    //                     resultsDiv.innerHTML = data.map(item => `
+    //                         <div class="search-item" data-id="${item.id}" data-harga="${item.harga_jual}" data-stok="${item.stok}">
+    //                             <div class="search-item-name">${item.nama}</div>
+    //                             <div class="search-item-code">Kode: ${item.kode_barang}</div>
+    //                             <div class="search-item-price">${formatCurrency(item.harga_jual)} (Stok: ${item.stok})</div>
+    //                         </div>
+    //                     `).join('');
+    //                 }
+    //                 resultsDiv.classList.add('show');
+    //             });
+    //     }
+    // });
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('input-barang')) {
             const rowIndex = e.target.dataset.rowIndex;
@@ -1858,25 +1887,38 @@
 
     // 4. Memilih Barang dari Search
     document.addEventListener('click', function(e) {
-        const item = e.target.closest('.search-item');
-        if (item) {
-            const resultsDiv = item.closest('.search-results');
-            const rowIndex = resultsDiv.dataset.rowIndex;
+        if (e.target.closest('.search-item')) {
+            const item = e.target.closest('.search-item');
+            const rowIndex = item.closest('.search-results').dataset.rowIndex;
             const row = document.querySelector(`.item-row[data-row-index="${rowIndex}"]`);
 
-            if (parseInt(item.dataset.stok) <= 0) {
-                alert('Maaf, stok barang kosong!');
+            const id = item.dataset.id;
+            const nama = item.querySelector('.search-item-name').textContent;
+            const harga = item.dataset.harga;
+            const stok = parseInt(item.dataset.stok); // Pastikan jadi Integer
+
+            // CEK STOK DI SINI
+            if (stok <= 0) {
+                alert('Maaf, stok barang ini sedang kosong (0)!');
+                row.querySelector('.search-results').classList.remove('show');
+                row.querySelector('.input-barang').value = '';
                 return;
             }
 
-            row.querySelector('.input-barang').value = item.querySelector('.search-item-name').textContent;
-            row.querySelector('.item-id').value = item.dataset.id;
-            row.querySelector('.harga-satuan').value = formatCurrency(item.dataset.harga);
-            row.querySelector('.input-qty').value = 1;
-            row.dataset.stok = item.dataset.stok;
+            row.querySelector('.input-barang').value = nama;
+            row.querySelector('.item-id').value = id;
+            row.querySelector('.harga-satuan').value = formatCurrency(harga);
+            
+            const qtyInput = row.querySelector('.input-qty');
+            qtyInput.max = stok;
+            qtyInput.dataset.stok = stok;
+            qtyInput.value = 1; // Otomatis isi 1 agar langsung valid
+            
+            row.dataset.stok = stok;
+            row.querySelector('.search-results').classList.remove('show');
+            qtyInput.focus();
             
             calculateRow(rowIndex);
-            resultsDiv.classList.remove('show');
         }
     });
 
@@ -2085,10 +2127,81 @@
         }
     });
 
+    // =================================================================
+    // SOLUSI: Validasi Qty Terhadap Stok (Klik Panah & Ketik Manual)
+    // =================================================================
+    function validasiBatasStok(element) {
+        const qtyInput = element;
+        const rowIndex = qtyInput.dataset.rowIndex;
+        const row = document.querySelector(`.item-row[data-row-index="${rowIndex}"]`);
+        
+        if (!row) return;
+
+        const stok = parseInt(row.dataset.stok);
+        let qty = parseInt(qtyInput.value);
+
+        // 1. BLOKIR ANGKA 0, MINUS, ATAU KOSONG
+        if (isNaN(qty) || qty <= 0) {
+            qtyInput.value = 1; // Paksa balik ke angka minimal yaitu 1
+            qty = 1;
+            
+            let errorDiv = row.querySelector('.qty-error');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'qty-error';
+                qtyInput.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = "Minimal pembelian 1 item!";
+            
+            setTimeout(() => {
+                if (errorDiv.parentNode) errorDiv.remove();
+            }, 2000);
+        }
+
+        // 2. BLOKIR JIKA MELEBIHI STOK GUDANG
+        if (!isNaN(stok) && qty > stok) {
+            qtyInput.value = stok; // Paksa balik ke batas stok maksimum
+            qty = stok;
+
+            let errorDiv = row.querySelector('.qty-error');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'qty-error';
+                qtyInput.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = stok <= 0 ? "Stok Kosong!" : `Maksimal stok sisa ${stok}`;
+            
+            setTimeout(() => {
+                if (errorDiv.parentNode) errorDiv.remove();
+            }, 2000);
+        }
+
+        // Jalankan kalkulasi total harga baris
+        calculateRow(rowIndex);
+    }
+
     // Listener Input Qty
+    // document.addEventListener('input', function(e) {
+    //     if (e.target.classList.contains('input-qty')) {
+    //         calculateRow(e.target.dataset.rowIndex);
+    //     }
+    // });
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('input-qty')) {
-            calculateRow(e.target.dataset.rowIndex);
+            validasiBatasStok(e.target);
+        }
+    });
+    // 2. Jalankan validasi saat ketik manual di keyboard (ketika tombol dilepas)
+    document.addEventListener('keyup', function(e) {
+        if (e.target.classList.contains('input-qty')) {
+            validasiBatasStok(e.target);
+        }
+    });
+
+    // 3. Jalankan validasi cadangan saat kursor pindah (blur/change) agar benar-benar aman
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('input-qty')) {
+            validasiBatasStok(e.target);
         }
     });
 
