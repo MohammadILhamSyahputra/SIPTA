@@ -117,12 +117,23 @@ class KasirController extends Controller
 
                 \Log::info('Detail transaction created for barang:', ['id_barang' => $item['id_barang']]);
 
-                // Update stock
-                $barang = Barang::find($item['id_barang']);
-                if ($barang) {
-                    $barang->decrement('stok', intval($item['qty']));
-                    \Log::info('Stock updated:', ['barang' => $barang->nama, 'qty' => $item['qty']]);
+                // MODIFIKASI DISINI: Ambil data barang dan potong hanya jika Tunai
+                if ($validated['metode_pembayaran'] === 'tunai') {
+                    $barang = Barang::find($item['id_barang']);
+                    if ($barang) {
+                        $barang->decrement('stok', intval($item['qty']));
+                        \Log::info('Stock updated (Tunai):', ['barang' => $barang->nama, 'qty' => $item['qty']]);
+                    }
+                } else {
+                    \Log::info('Stock skip update (QRIS Pending):', ['id_barang' => $item['id_barang']]);
                 }
+
+                // Update stock
+                // $barang = Barang::find($item['id_barang']);
+                // if ($barang) {
+                //     $barang->decrement('stok', intval($item['qty']));
+                //     \Log::info('Stock updated:', ['barang' => $barang->nama, 'qty' => $item['qty']]);
+                // }
             }
 
             \Log::info('Transaction completed successfully');
@@ -206,23 +217,26 @@ class KasirController extends Controller
     {
         $transaksi = Transaksi::with('detail')->findOrFail($id);
 
-        // Restore stock
-        foreach ($transaksi->detail as $detail) {
-            $barang = Barang::find($detail->id_barang);
-            if ($barang) {
-                $barang->update(['stok' => $barang->stok + $detail->qty]);
+        // MODIFIKASI: Hanya kembalikan stok jika transaksi lamanya berstatus SUCCESS
+        if ($transaksi->status_pembayaran === 'success') {
+            foreach ($transaksi->detail as $detail) {
+                $barang = Barang::find($detail->id_barang);
+                if ($barang) {
+                    $barang->update(['stok' => $barang->stok + $detail->qty]);
+                }
             }
+            $msg = 'Transaksi berhasil dihapus dan stok dikembalikan!';
+        } else {
+            $msg = 'Transaksi pending berhasil dihapus (Stok tidak berubah).';
         }
 
-        // Delete detail transactions first
+        // Hapus detail dan main record transaksi
         DetailTransaksi::where('id_transaksi', $id)->delete();
-        
-        // Delete transaction
         $transaksi->delete();
 
         return redirect()
             ->route('kasir.history')
-            ->with('success', 'Transaksi berhasil dihapus dan stok dikembalikan!');
+            ->with('success', $msg);
     }
 
     // public function updateStatus(Request $request, $order_id)
@@ -243,13 +257,55 @@ class KasirController extends Controller
     // }
     public function updateStatus(Request $request, $order_id)
     {
-        // Cari transaksi berdasarkan string order_id (contoh: SIPTA-51-...)
-        $transaksi = Transaksi::where('order_id', $order_id)->first();
+        // Cari transaksi berdasarkan string order_id
+        $transaksi = Transaksi::with('detail')->where('order_id', $order_id)->first();
         
         if ($transaksi) {
-            $transaksi->update(['status_pembayaran' => 'success']);
+            // Cegah duplikasi pemotongan stok jika statusnya sudah telanjur success
+            if ($transaksi->status_pembayaran !== 'success') {
+                
+                // Lakukan perulangan untuk memotong stok masing-masing barang
+                foreach ($transaksi->detail as $detail) {
+                    $barang = Barang::find($detail->id_barang);
+                    if ($barang) {
+                        $barang->decrement('stok', $detail->qty);
+                        \Log::info('Stock decremented via QRIS Success:', ['barang' => $barang->nama, 'qty' => $detail->qty]);
+                    }
+                }
+
+                // Update status jadi success
+                $transaksi->update(['status_pembayaran' => 'success']);
+            }
+            
             return response()->json(['success' => true]);
         }
         return response()->json(['success' => false], 404);
+    }
+
+    public function alihkanKeTunai($id)
+    {
+        $transaksi = Transaksi::with('detail.barang')->findOrFail($id);
+
+        if ($transaksi->metode_pembayaran == 'qris' && $transaksi->status_pembayaran == 'pending') {
+            
+            $keranjangLama = $transaksi->detail->map(function($item) {
+                return [
+                    'id' => $item->id_barang,
+                    'nama' => $item->barang->nama,
+                    'harga_jual' => $item->harga_satuan,
+                    // MODIFIKASI: Cukup ambil stok asli karena database belum berkurang saat pending
+                    'stok' => $item->barang->stok, 
+                    'qty' => $item->qty
+                ];
+            });
+
+            // Hapus data transaksi pending lama agar bersih
+            $transaksi->detail()->delete();
+            $transaksi->delete();
+
+            return redirect('/kasir')->with('keranjang_lama', json_encode($keranjangLama));
+        }
+
+        return redirect('/kasir/history')->with('error', 'Transaksi tidak valid untuk dialihkan.');
     }
 }

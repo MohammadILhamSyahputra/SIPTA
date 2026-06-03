@@ -222,6 +222,12 @@
                                 <i class="fas fa-search"></i>
                             </button>
 
+                            @if($trans->metode_pembayaran == 'qris' && $trans->status_pembayaran == 'pending')
+                                <a href="/kasir/alihkan-tunai/{{ $trans->id }}" class="btn btn-sm btn-warning text-dark fw-bold ms-2" style="font-size: 0.75rem; padding: 0.375rem 0.5rem; border-radius: 4px;" onclick="return confirm('Pelanggan ingin ganti ke pembayaran Tunai? Keranjang POS akan diisi kembali.')">
+                                    <i class="fas fa-money-bill-wave me-1"></i> Pindah Tunai
+                                </a>
+                            @endif
+
                             <form method="POST" action="/kasir/{{ $trans->id }}" class="delete-form ms-3" onsubmit="return confirm('Hapus transaksi ini? Stok barang akan dikembalikan.');">
                                 @csrf
                                 @method('DELETE')
@@ -327,7 +333,6 @@
         const filterButtons = document.querySelectorAll('.filter-btn');
         const transactionItems = document.querySelectorAll('.transaction-item');
         
-        // Fungsi helper format rupiah
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -336,7 +341,6 @@
             }).format(angka);
         }
 
-        // Fungsi untuk menghitung total badge counter & kalkulasi pendapatan awal
         function initKalkulasi() {
             let totalTunai = 0;
             let totalQris = 0;
@@ -347,33 +351,32 @@
             transactionItems.forEach(item => {
                 const method = item.dataset.paymentMethod;
                 const amount = parseInt(item.dataset.amount) || 0;
+                
+                // Cari tahu status pembayaran dari elemen badge di dalam baris ini
+                // Kita asumsikan baris transaksi memiliki penanda status sukses
+                const isSuccess = item.querySelector('.badge-status').textContent.trim().toLowerCase() === 'success';
 
-                totalPendapatanSemua += amount;
-
-                if (method === 'tunai') {
-                    countTunai++;
-                    totalTunai += amount;
-                } else if (method === 'qris') {
-                    countQris++;
-                    totalQris += amount;
+                // Hanya jumlahkan uang jika status pembayarannya SUCCESS
+                if (isSuccess) {
+                    totalPendapatanSemua += amount;
+                    if (method === 'tunai') totalTunai += amount;
+                    if (method === 'qris') totalQris += amount;
                 }
+
+                // Untuk hitungan jumlah/counter transaksi tetap dihitung semua metode
+                if (method === 'tunai') countTunai++;
+                if (method === 'qris') countQris++;
             });
 
-            // Tampilkan jumlah data di badge tombol filter
             document.getElementById('count-tunai').textContent = countTunai;
             document.getElementById('count-qris').textContent = countQris;
-            
-            // Set default teks pendapatan untuk filter 'Semua' saat load pertama kali
             document.getElementById('filtered-income').textContent = formatRupiah(totalPendapatanSemua);
         }
 
-        // Jalankan fungsi hitung counter di awal load
         initKalkulasi();
 
-        // Logika Klik pada Tombol Filter
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // 1. Ganti status active class pada tombol filter
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
 
@@ -381,21 +384,24 @@
                 let runningTotalIncome = 0;
                 let visibleCount = 0;
 
-                // 2. Sembunyikan atau Tampilkan baris transaksi berdasarkan filter
                 transactionItems.forEach(item => {
                     const itemMethod = item.dataset.paymentMethod;
                     const itemAmount = parseInt(item.dataset.amount) || 0;
+                    const isSuccess = item.querySelector('.badge-status').textContent.trim().toLowerCase() === 'success';
 
                     if (selectedMethod === 'all' || itemMethod === selectedMethod) {
                         item.style.setProperty('display', 'flex', 'important');
-                        runningTotalIncome += itemAmount;
                         visibleCount++;
+                        
+                        // Hanya tambahkan ke total pendapatan terfilter jika statusnya SUCCESS
+                        if (isSuccess) {
+                            runningTotalIncome += itemAmount;
+                        }
                     } else {
                         item.style.setProperty('display', 'none', 'important');
                     }
                 });
 
-                // 3. Update teks rangkuman pendapatan dan jumlah data terfilter di layar
                 document.getElementById('filtered-count').textContent = visibleCount;
                 document.getElementById('filtered-income').textContent = formatRupiah(runningTotalIncome);
             });

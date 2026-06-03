@@ -73,6 +73,8 @@ Route::middleware(['auth', 'kasir'])->group(function () {
     Route::delete('/kasir/{id}', [KasirController::class, 'destroy'])->name('kasir.destroy');
 
     Route::post('/kasir/update-status/{order_id}', [KasirController::class, 'updateStatus'])->name('kasir.updateStatus');
+    // Route::put('/kasir/ubah-ke-tunai/{id}', [KasirController::class, 'ubahKeTunai']);
+    Route::get('/kasir/alihkan-tunai/{id}', [KasirController::class, 'alihkanKeTunai']);
 });
 
 // Route::resource('barang', BarangController::class);

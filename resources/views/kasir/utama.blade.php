@@ -1442,6 +1442,48 @@
     // Inisialisasi Variabel Global
     let rowCount = 1;
 
+    @if(session('keranjang_lama'))
+        const keranjangLama = {!! session('keranjang_lama') !!};
+        
+        if (keranjangLama.length > 0) {
+            document.getElementById('items-container').innerHTML = '';
+            rowCount = 0;
+
+            keranjangLama.forEach((item, index) => {
+                const container = document.getElementById('items-container');
+                const newRow = document.createElement('div');
+                newRow.className = 'item-row filled'; 
+                newRow.dataset.rowIndex = index;
+                newRow.dataset.stok = item.stok; 
+
+                newRow.innerHTML = `
+                    <div class="search-input">
+                        <input type="text" class="form-control input-barang" value="${item.nama}" data-row-index="${index}">
+                        <div class="search-results" data-row-index="${index}"></div>
+                        <input type="hidden" class="item-id" value="${item.id}">
+                    </div>
+                    <div>
+                        <input type="number" class="form-control input-qty" value="${item.qty}" min="1" data-row-index="${index}">
+                    </div>
+                    <div>
+                        <input type="text" class="form-control harga-satuan" value="${formatCurrency(item.harga_jual)}" readonly>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control subtotal" value="${formatCurrency(item.harga_jual * item.qty)}" readonly>
+                    </div>
+                    <div>
+                        <button type="button" class="btn-delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(newRow);
+                rowCount++;
+            });
+
+            addNewRow(); // Panggil fungsi bawaanmu untuk baris kosong baru
+            updateSummary(); // Panggil fungsi bawaanmu untuk hitung total harga
+        }
+    @endif
+
     // ==========================================
     // A. FUNGSI UTILITY (TOOLS)
     // ==========================================
