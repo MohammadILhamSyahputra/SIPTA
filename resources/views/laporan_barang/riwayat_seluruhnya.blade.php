@@ -210,7 +210,7 @@
                     <div>
                         <div class="income-label fw-bold">Total Pendapatan (Berdasarkan Filter)</div>
                         <div class="income-value mt-1">
-                            Rp {{ number_format($transaksi->sum('total_harga'), 0, ',', '.') }}
+                            Rp {{ number_format($transaksi->where('status_pembayaran', 'success')->sum('total_harga'), 0, ',', '.') }}
                         </div>
                     </div>
                     <div class="text-end">

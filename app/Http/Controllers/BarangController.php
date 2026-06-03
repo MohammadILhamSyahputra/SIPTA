@@ -79,6 +79,38 @@ class BarangController extends Controller
     }
     
 
+    // public function laporanStok(Request $request)
+    // {
+    //     $tglMulai = $request->input('tgl_mulai', date('Y-m-01')); 
+    //     $tglAkhir = $request->input('tgl_akhir', date('Y-m-d'));
+        
+    //     if (strtotime($tglMulai) > strtotime($tglAkhir)) {
+    //         $tglMulai = date('Y-m-01');
+    //         $tglAkhir = date('Y-m-d');
+    //     }
+
+    //     $laporanData = DB::table('detail_transaksi as dt')
+    //         ->select(
+    //             'b.kode_barang',
+    //             'b.nama',
+    //             'b.harga_beli',
+    //             'b.harga_jual',
+    //             DB::raw('SUM(dt.qty) as total_terjual')
+    //         )
+    //         ->join('transaksi as t', 'dt.id_transaksi', '=', 't.id')
+    //         ->join('barang as b', 'dt.id_barang', '=', 'b.id')
+    //         ->whereBetween(DB::raw('DATE(t.created_at)'), [$tglMulai, $tglAkhir])
+    //         ->groupBy('b.kode_barang', 'b.nama', 'b.harga_beli', 'b.harga_jual')
+    //         ->having('total_terjual', '>', 0)
+    //         ->orderByDesc('total_terjual')
+    //         ->get();
+
+    //     $topBarangChart = $laporanData->take(10); 
+    //     $chartLabels = $topBarangChart->pluck('nama')->toArray();
+    //     $chartData = $topBarangChart->pluck('total_terjual')->toArray();
+
+    //     return view('laporan_barang.laporan_stok', compact('laporanData', 'tglMulai', 'tglAkhir', 'chartLabels', 'chartData'));
+    // }
     public function laporanStok(Request $request)
     {
         $tglMulai = $request->input('tgl_mulai', date('Y-m-01')); 
@@ -89,6 +121,9 @@ class BarangController extends Controller
             $tglAkhir = date('Y-m-d');
         }
 
+        // =================================================================
+        // UPDATE QUERY: HANYA MENGHITUNG BARANG DARI TRANSAKSI YANG 'SUCCESS'
+        // =================================================================
         $laporanData = DB::table('detail_transaksi as dt')
             ->select(
                 'b.kode_barang',
@@ -99,7 +134,10 @@ class BarangController extends Controller
             )
             ->join('transaksi as t', 'dt.id_transaksi', '=', 't.id')
             ->join('barang as b', 'dt.id_barang', '=', 'b.id')
-            ->whereBetween(DB::raw('DATE(t.created_at)'), [$tglMulai, $tglAkhir])
+            // 1. Disesuaikan menggunakan kolom 'tanggal' sesuai database simpan transaksi kalian
+            ->whereBetween(DB::raw('DATE(t.tanggal)'), [$tglMulai, $tglAkhir])
+            // 2. KUNCI UTAMA: Menyaring hanya transaksi yang sudah lunas/sukses
+            ->where('t.status_pembayaran', 'success') 
             ->groupBy('b.kode_barang', 'b.nama', 'b.harga_beli', 'b.harga_jual')
             ->having('total_terjual', '>', 0)
             ->orderByDesc('total_terjual')

@@ -115,11 +115,8 @@ class LaporanPenjualanController extends Controller
                 'b.kode_barang',
                 'b.nama as nama_barang',
                 'k.nama_kategori as kategori',
-                
                 'b.harga_beli', 
-                
                 DB::raw('MAX(dt.harga_satuan) as harga_satuan'), 
-                
                 DB::raw('SUM(dt.qty) as total_qty'), 
                 DB::raw('SUM(dt.qty * dt.harga_satuan) as total_omset'),
                 DB::raw('SUM((dt.harga_satuan - b.harga_beli) * dt.qty) as total_untung')
@@ -128,6 +125,11 @@ class LaporanPenjualanController extends Controller
             ->join('barang as b', 'dt.id_barang', '=', 'b.id')
             ->join('kategori as k', 'b.id_kategori', '=', 'k.id')
             ->whereBetween('t.tanggal', [$startDateTime, $endDateTime])
+            
+            // =================================================================
+            // KUNCI PERBAIKAN: Hanya menghitung transaksi yang sukses/lunas
+            // =================================================================
+            ->where('t.status_pembayaran', 'success') 
             
             ->groupBy('b.kode_barang', 'b.nama', 'b.harga_beli', 'k.nama_kategori')
             ->get();
